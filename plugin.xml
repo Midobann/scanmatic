@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	id="com.spendmatic.scanmatic"
+	version="0.0.1">
+	
+	<name>ScanMatic</name>
+	
+	<description>Image capture components</description>
+	
+	<engines>
+		<engine name="cordova" version=">=3.1.0" /><!-- Needs cordova/urlutil -->
+	</engines>
+
+	<platform name="android">
+		<config-file target="res/xml/config.xml" parent="/*">
+            <feature name="ScanMatic"> 
+                <param name="android-package" value="com.spendmatic.scanmatic.ScanMatic"/>
+            </feature>
+        </config-file>
+
+    	<source-file src="src/android/ScanMatic.java" target-dir="src/com/spendmatic/app" />
+    	<source-file src="src/android/SMCamera.java" target-dir="src/com/spendmatic/app" />
+    	<source-file src="src/android/SMViewer.java" target-dir="src/com/spendmatic/app" />
+    	<source-file src="src/android/Thread_FramePrep.java" target-dir="src/com/spendmatic/app" />
+			
+	</platform>
+
+</plugin>
