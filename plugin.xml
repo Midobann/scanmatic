@@ -19,10 +19,10 @@
             </feature>
         </config-file>
 
-    	<source-file src="src/android/ScanMatic.java" target-dir="src/com/spendmatic/app" />
-    	<source-file src="src/android/SMCamera.java" target-dir="src/com/spendmatic/app" />
-    	<source-file src="src/android/SMViewer.java" target-dir="src/com/spendmatic/app" />
-    	<source-file src="src/android/Thread_FramePrep.java" target-dir="src/com/spendmatic/app" />
+    	<source-file src="src/android/ScanMatic.java" target-dir="src/com/spendmatic/scanmatic" />
+    	<source-file src="src/android/SMCamera.java" target-dir="src/com/spendmatic/scanmatic" />
+    	<source-file src="src/android/SMViewer.java" target-dir="src/com/spendmatic/scanmatic" />
+    	<source-file src="src/android/Thread_FramePrep.java" target-dir="src/com/spendmatic/scanmatic" />
 			
 	</platform>
 

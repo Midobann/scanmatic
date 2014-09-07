@@ -1,4 +1,4 @@
-package com.spendmatic.app;
+package com.spendmatic.scanmatic;
 
 import java.io.ByteArrayOutputStream;
 

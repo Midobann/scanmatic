@@ -1,4 +1,4 @@
-package com.spendmatic.app;
+package com.spendmatic.scanmatic;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -18,8 +18,9 @@ public class ScanMatic extends CordovaPlugin {
 	@Override
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
 		super.initialize(cordova, webView);
-		SpendMatic sm = (SpendMatic) cordova.getActivity();
+		//SpendMatic sm = (SpendMatic) cordova.getActivity();
 		//smViewer = sm.smViewer;
+		smViewer = null;
 	}
 
 	public void resetSession(CallbackContext callbackContext) {
@@ -54,8 +55,8 @@ public class ScanMatic extends CordovaPlugin {
 	public void capture(CallbackContext callbackContext) {
 		if (smViewer != null) {
 			smViewer.requestCapture();
-			SpendMatic sm = (SpendMatic) cordova.getActivity();
-			sm.playShutterSound();
+			//SpendMatic sm = (SpendMatic) cordova.getActivity();
+			//sm.playShutterSound();
 			callbackContext.success();
 		}
 	}
@@ -98,8 +99,8 @@ public class ScanMatic extends CordovaPlugin {
         	resetSession(callbackContext);
         	return true;
         } else if (action.equals("transparent")) {
-        	SpendMatic sm = (SpendMatic) cordova.getActivity();
-        	((WebView) sm.getWebView()).setBackgroundColor(0x00000000);
+        	//SpendMatic sm = (SpendMatic) cordova.getActivity();
+        	//((WebView) sm.getWebView()).setBackgroundColor(0x00000000);
         	callbackContext.success();
         	return true;
         }
