@@ -19,7 +19,7 @@ public class ScanMatic extends CordovaPlugin {
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
 		super.initialize(cordova, webView);
 		SpendMatic sm = (SpendMatic) cordova.getActivity();
-		smViewer = sm.smViewer;
+		//smViewer = sm.smViewer;
 	}
 
 	public void resetSession(CallbackContext callbackContext) {
