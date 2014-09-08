@@ -1,5 +1,7 @@
 package com.spendmatic.scanmatic;
 
+import java.util.HashMap;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
@@ -8,12 +10,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
+import android.app.Activity;
 import android.media.SoundPool;
 import android.media.AudioManager;
 
-import com.meteor.app;
+import com.meteor.app.R;
 
 
 public class ScanMatic extends CordovaPlugin {
@@ -30,11 +37,12 @@ public class ScanMatic extends CordovaPlugin {
 		super.initialize(cordova, webView);
 		Activity activity = cordova.getActivity();
 		smViewer = new SMViewer(activity);
-		RelativeLayout newroot = new RelativeLayout(this);
+		RelativeLayout newroot = new RelativeLayout(activity);
 		newroot.addView(smViewer);
-		FrameLayout oldroot = (FrameLayout) activity.root.getParent();
-		oldroot.removeView(activity.root);
-		newroot.addView(this.root);
+		View v = activity.findViewById(android.R.id.content);
+		FrameLayout oldroot = (FrameLayout) v.getParent();
+		oldroot.removeView(v);
+		newroot.addView(v);
 		activity.setContentView(newroot);
 
 		webView.setBackgroundColor(0);
@@ -51,7 +59,7 @@ public class ScanMatic extends CordovaPlugin {
 		soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 100);
 		soundPoolMap = new HashMap<Integer, Integer>(1);
 		
-		soundPoolMap.put(shutter, soundPool.load(this, shutter, 1));
+		soundPoolMap.put(shutter, soundPool.load(activity, shutter, 1));
 	}
 
 	  /**
