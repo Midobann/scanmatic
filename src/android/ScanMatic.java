@@ -20,7 +20,7 @@ import android.app.Activity;
 import android.media.SoundPool;
 import android.media.AudioManager;
 
-import com.meteor.app.R;
+import com.spendmatic.app.R;
 
 
 public class ScanMatic extends CordovaPlugin {
