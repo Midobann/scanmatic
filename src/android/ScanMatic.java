@@ -52,6 +52,26 @@ public class ScanMatic extends CordovaPlugin {
 		soundPoolMap.put(shutter, soundPool.load(this, shutter, 1));
 	}
 
+	  /**
+     * Called when the system is about to start resuming a previous activity.
+     *
+     * @param multitasking		Flag indicating if multitasking is turned on for app
+     */
+	@Override
+    public void onPause(boolean multitasking) {
+    	smViewer.smCamera.pausePreview();
+    }
+
+    /**
+     * Called when the activity will start interacting with the user.
+     *
+     * @param multitasking		Flag indicating if multitasking is turned on for app
+     */
+    @Override
+    public void onResume(boolean multitasking) {
+    	smViewer.smCamera.resumePreview();
+    }
+
 	public void playShutterSound() {
 		soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);
 	}
