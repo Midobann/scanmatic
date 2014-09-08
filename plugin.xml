@@ -20,6 +20,12 @@
             </feature>
         </config-file>
 
+        <config-file target="AndroidManifest.xml" parent="/*">
+        	<uses-permission android:name="android.permission.CAMERA" />
+		    <uses-feature android:name="android.hardware.camera" />
+		    <uses-feature android:name="android.hardware.camera.autofocus" />
+        </config-file>
+
     	<source-file src="src/android/ScanMatic.java" target-dir="src/com/spendmatic/scanmatic" />
     	<source-file src="src/android/SMCamera.java" target-dir="src/com/spendmatic/scanmatic" />
     	<source-file src="src/android/SMViewer.java" target-dir="src/com/spendmatic/scanmatic" />
