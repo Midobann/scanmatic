@@ -25,7 +25,7 @@ import com.spendmatic.app.R;
 
 public class ScanMatic extends CordovaPlugin {
 
-	final SMViewer smViewer;
+	SMViewer smViewer;
 
 	public static final int shutter = R.raw.shutter;
 	
@@ -77,10 +77,10 @@ public class ScanMatic extends CordovaPlugin {
 				callbackContext.success();
 			}
 		});
-		return true
+		return true;
 	}
 	
-	public void stopCamera(final CallbackContext callbackContext) {
+	public boolean stopCamera(final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				smViewer.smCamera.stopPreview();
@@ -90,7 +90,7 @@ public class ScanMatic extends CordovaPlugin {
 		return true;
 	}
 	
-	public void flash(final String state, final CallbackContext callbackContext) {
+	public boolean flash(final String state, final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				smViewer.smCamera.setFlash(state);
@@ -100,7 +100,7 @@ public class ScanMatic extends CordovaPlugin {
 		return true;
 	}
 
-	public void capture(final CallbackContext callbackContext) {
+	public boolean capture(final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				smViewer.requestCapture();
@@ -111,7 +111,7 @@ public class ScanMatic extends CordovaPlugin {
 		return true;
 	}
 
-	public void info(final CallbackContext callbackContext) {
+	public boolean info(final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				callbackContext.success(smViewer.smCamera.info());
@@ -120,7 +120,7 @@ public class ScanMatic extends CordovaPlugin {
 		return true;
 	}
 
-	public void focus(final CallbackContext callbackContext) {
+	public boolean focus(final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				smViewer.smCamera.focus();
@@ -143,7 +143,7 @@ public class ScanMatic extends CordovaPlugin {
         } else if (action.equals("capture")) {
         	return capture(callbackContext);
         } else if (action.equals("focus")) {
-        	return focus(callbackContext)
+        	return focus(callbackContext);
         } else if (action.equals("flash")) {
         	return flash(args.getString(0), callbackContext);
         } else if (action.equals("onCapture")) {
