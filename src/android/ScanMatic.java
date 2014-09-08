@@ -35,15 +35,22 @@ public class ScanMatic extends CordovaPlugin {
 	@Override
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
 		super.initialize(cordova, webView);
+		
+		
 		Activity activity = cordova.getActivity();
+		ViewGroup root = (ViewGroup) activity.findViewById(android.R.id.content);
+		View webViewContainer = (View) webView.getParent(); // webView is nested in a LinearLayoutSoftKeyboardDetect
 		smViewer = new SMViewer(activity);
-		RelativeLayout newroot = new RelativeLayout(activity);
-		newroot.addView(smViewer);
-		View v = activity.findViewById(android.R.id.content);
-		ViewGroup oldroot = (ViewGroup) v.getParent();
-		oldroot.removeView(v);
-		newroot.addView(v);
-		activity.setContentView(newroot);
+		root.removeView(webViewContainer);
+		root.addView(smViewer);
+		root.addView(webViewContainer);
+		//RelativeLayout newroot = new RelativeLayout(activity);
+		//newroot.addView(smViewer);
+		
+		//ViewGroup oldroot = (ViewGroup) v;
+		//oldroot.removeView(v);
+		//newroot.addView(v);
+		//activity.setContentView(newroot);
 
 		webView.setBackgroundColor(0);
 		WebSettings settings = webView.getSettings();
