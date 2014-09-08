@@ -13,6 +13,8 @@ import android.webkit.WebView;
 import android.media.SoundPool;
 import android.media.AudioManager;
 
+import com.meteor.app;
+
 
 public class ScanMatic extends CordovaPlugin {
 
