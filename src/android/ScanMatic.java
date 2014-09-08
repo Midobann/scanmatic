@@ -10,17 +10,50 @@ import org.json.JSONException;
 import android.view.View;
 import android.webkit.WebView;
 
+import android.media.SoundPool;
+import android.media.AudioManager;
+
 
 public class ScanMatic extends CordovaPlugin {
 
 	SMViewer smViewer;
+
+	public static final int shutter = R.raw.shutter;
 	
+	public SoundPool soundPool;
+	public HashMap<Integer, Integer> soundPoolMap; 
+
 	@Override
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
 		super.initialize(cordova, webView);
-		//SpendMatic sm = (SpendMatic) cordova.getActivity();
-		//smViewer = sm.smViewer;
-		smViewer = null;
+		Activity activity = cordova.getActivity();
+		smViewer = new SMViewer(activity);
+		RelativeLayout newroot = new RelativeLayout(this);
+		newroot.addView(smViewer);
+		FrameLayout oldroot = (FrameLayout) activity.root.getParent();
+		oldroot.removeView(activity.root);
+		newroot.addView(this.root);
+		activity.setContentView(newroot);
+
+		webView.setBackgroundColor(0);
+		WebSettings settings = webView.getSettings();
+		settings.setBuiltInZoomControls(false);
+		settings.setSupportZoom(true);
+		settings.setUserAgentString(settings.getUserAgentString() + " com.spendmatic.app");
+
+		//settings.setDomStorageEnabled(true);
+		// settings.setAllowFileAccess(true);
+		// settings.setAppCacheEnabled(true);
+		// settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // bad
+
+		soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 100);
+		soundPoolMap = new HashMap<Integer, Integer>(1);
+		
+		soundPoolMap.put(shutter, soundPool.load(this, shutter, 1));
+	}
+
+	public void playShutterSound() {
+		soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);
 	}
 
 	public void resetSession(CallbackContext callbackContext) {
