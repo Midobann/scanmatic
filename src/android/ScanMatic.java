@@ -25,7 +25,7 @@ import com.spendmatic.app.R;
 
 public class ScanMatic extends CordovaPlugin {
 
-	SMViewer smViewer;
+	final SMViewer smViewer;
 
 	public static final int shutter = R.raw.shutter;
 	
@@ -35,8 +35,7 @@ public class ScanMatic extends CordovaPlugin {
 	@Override
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
 		super.initialize(cordova, webView);
-		
-		
+			
 		Activity activity = cordova.getActivity();
 		ViewGroup root = (ViewGroup) activity.findViewById(android.R.id.content);
 		View webViewContainer = (View) webView.getParent(); // webView is nested in a LinearLayoutSoftKeyboardDetect
@@ -44,46 +43,23 @@ public class ScanMatic extends CordovaPlugin {
 		root.removeView(webViewContainer);
 		root.addView(smViewer);
 		root.addView(webViewContainer);
-		//RelativeLayout newroot = new RelativeLayout(activity);
-		//newroot.addView(smViewer);
-		
-		//ViewGroup oldroot = (ViewGroup) v;
-		//oldroot.removeView(v);
-		//newroot.addView(v);
-		//activity.setContentView(newroot);
 
 		webView.setBackgroundColor(0);
 		WebSettings settings = webView.getSettings();
 		settings.setBuiltInZoomControls(false);
 		settings.setSupportZoom(true);
-		settings.setUserAgentString(settings.getUserAgentString() + " com.spendmatic.app");
-
-		//settings.setDomStorageEnabled(true);
-		// settings.setAllowFileAccess(true);
-		// settings.setAppCacheEnabled(true);
-		// settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // bad
-
+		
 		soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 100);
 		soundPoolMap = new HashMap<Integer, Integer>(1);
 		
 		soundPoolMap.put(shutter, soundPool.load(activity, shutter, 1));
 	}
 
-	  /**
-     * Called when the system is about to start resuming a previous activity.
-     *
-     * @param multitasking		Flag indicating if multitasking is turned on for app
-     */
 	@Override
     public void onPause(boolean multitasking) {
     	smViewer.smCamera.pausePreview();
     }
 
-    /**
-     * Called when the activity will start interacting with the user.
-     *
-     * @param multitasking		Flag indicating if multitasking is turned on for app
-     */
     @Override
     public void onResume(boolean multitasking) {
     	smViewer.smCamera.resumePreview();
@@ -93,42 +69,65 @@ public class ScanMatic extends CordovaPlugin {
 		soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);
 	}
 
-	public void resetSession(CallbackContext callbackContext) {
-		if (smViewer != null) {
-			smViewer.numTouch = 0;
-			smViewer.smCamera.capturedFrames = 0;
-			callbackContext.success();
-		}
+	
+	public boolean startCamera(final CallbackContext callbackContext) {
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
+				smViewer.smCamera.startPreview();
+				callbackContext.success();
+			}
+		});
+		return true
 	}
 	
-	public void startCamera(CallbackContext callbackContext) {
-		if (smViewer != null) {
-			smViewer.smCamera.startPreview();
-			callbackContext.success();
-		}
+	public void stopCamera(final CallbackContext callbackContext) {
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
+				smViewer.smCamera.stopPreview();
+				callbackContext.success();
+			}
+		});
+		return true;
 	}
 	
-	public void stopCamera(CallbackContext callbackContext) {
-		if(smViewer != null) {     
-			smViewer.smCamera.stopPreview();
-			callbackContext.success();
-		}
-	}
-	
-	public void setFlash(String state, CallbackContext callbackContext) {
-		if (smViewer != null) {
-			smViewer.smCamera.setFlash(state);
-			callbackContext.success();
-		}
+	public void flash(final String state, final CallbackContext callbackContext) {
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
+				smViewer.smCamera.setFlash(state);
+				callbackContext.success();
+			}
+		});
+		return true;
 	}
 
-	public void capture(CallbackContext callbackContext) {
-		if (smViewer != null) {
-			smViewer.requestCapture();
-			//SpendMatic sm = (SpendMatic) cordova.getActivity();
-			//sm.playShutterSound();
-			callbackContext.success();
-		}
+	public void capture(final CallbackContext callbackContext) {
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
+				smViewer.requestCapture();
+				playShutterSound();
+				callbackContext.success();
+			}
+		});
+		return true;
+	}
+
+	public void info(final CallbackContext callbackContext) {
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
+				callbackContext.success(smViewer.smCamera.info());
+			}
+		});	
+		return true;
+	}
+
+	public void focus(final CallbackContext callbackContext) {
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
+				smViewer.smCamera.focus();
+				callbackContext.success();
+			}
+		});
+		return true;
 	}
 	
 	@Override
@@ -136,16 +135,17 @@ public class ScanMatic extends CordovaPlugin {
 		
 		if (action.equals("camera")) {
 			if (args.getBoolean(0))
-				startCamera(callbackContext);
+				return startCamera(callbackContext);
 			else
-				stopCamera(callbackContext);
-			return true;
+				return stopCamera(callbackContext);
 		} else if (action.equals("cameraInfo")) {
-			callbackContext.success(smViewer.smCamera.info());
-			return true;
+			return info(callbackContext);
         } else if (action.equals("capture")) {
-        	capture(callbackContext);
-        	return true;
+        	return capture(callbackContext);
+        } else if (action.equals("focus")) {
+        	return focus(callbackContext)
+        } else if (action.equals("flash")) {
+        	return flash(args.getString(0), callbackContext);
         } else if (action.equals("onCapture")) {
         	smViewer.captureCallback = callbackContext;
         	return true;
@@ -158,22 +158,7 @@ public class ScanMatic extends CordovaPlugin {
         } else if (action.equals("onAutoFocusMove")) {
         	smViewer.autoFocusMovedCallback = callbackContext;
         	return true;
-        } else if (action.equals("focus")) {
-        	smViewer.smCamera.focus();
-        	callbackContext.success();
-        	return true;
-        } else if (action.equals("flash")) {
-        	setFlash(args.getString(0), callbackContext);
-        	return true;
-        } else if (action.equals("reset")) {
-        	resetSession(callbackContext);
-        	return true;
-        } else if (action.equals("transparent")) {
-        	//SpendMatic sm = (SpendMatic) cordova.getActivity();
-        	//((WebView) sm.getWebView()).setBackgroundColor(0x00000000);
-        	callbackContext.success();
-        	return true;
-        }
+        } 
 		return false;
     	
 	}
