@@ -40,7 +40,7 @@ public class ScanMatic extends CordovaPlugin {
 		RelativeLayout newroot = new RelativeLayout(activity);
 		newroot.addView(smViewer);
 		View v = activity.findViewById(android.R.id.content);
-		FrameLayout oldroot = (FrameLayout) v.getParent();
+		ViewGroup oldroot = (ViewGroup) v.getParent();
 		oldroot.removeView(v);
 		newroot.addView(v);
 		activity.setContentView(newroot);
