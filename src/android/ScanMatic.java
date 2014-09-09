@@ -71,32 +71,32 @@ public class ScanMatic extends CordovaPlugin {
 
 	
 	public boolean startCamera(final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
+		//cordova.getThreadPool().execute(new Runnable() {
+		//	public void run() {
 				smViewer.smCamera.startPreview();
 				callbackContext.success();
-			}
-		});
+		//	}
+		//});
 		return true;
 	}
 	
 	public boolean stopCamera(final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
+		//cordova.getThreadPool().execute(new Runnable() {
+		//	public void run() {
 				smViewer.smCamera.stopPreview();
 				callbackContext.success();
-			}
-		});
+		//	}
+		//});
 		return true;
 	}
 	
 	public boolean flash(final String state, final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
+		//cordova.getThreadPool().execute(new Runnable() {
+		//	public void run() {
 				smViewer.smCamera.setFlash(state);
 				callbackContext.success();
-			}
-		});
+		//	}
+		//});
 		return true;
 	}
 
@@ -112,21 +112,21 @@ public class ScanMatic extends CordovaPlugin {
 	}
 
 	public boolean info(final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
+		//cordova.getThreadPool().execute(new Runnable() {
+		//	public void run() {
 				callbackContext.success(smViewer.smCamera.info());
-			}
-		});	
+		//	}
+		//});	
 		return true;
 	}
 
 	public boolean focus(final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
+		//cordova.getThreadPool().execute(new Runnable() {
+		//	public void run() {
 				smViewer.smCamera.focus();
 				callbackContext.success();
-			}
-		});
+		//	}
+		//});
 		return true;
 	}
 	
