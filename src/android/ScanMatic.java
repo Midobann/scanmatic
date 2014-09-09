@@ -101,13 +101,13 @@ public class ScanMatic extends CordovaPlugin {
 	}
 
 	public boolean capture(final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
+		//cordova.getThreadPool().execute(new Runnable() {
+		//	public void run() {
 				smViewer.requestCapture();
 				playShutterSound();
-				callbackContext.success();
-			}
-		});
+		//	}
+		//});
+		callbackContext.success();
 		return true;
 	}
 
