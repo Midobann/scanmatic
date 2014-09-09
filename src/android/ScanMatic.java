@@ -21,6 +21,7 @@ import android.media.SoundPool;
 import android.media.AudioManager;
 
 import com.spendmatic.app.R;
+import android.util.Log;
 
 
 public class ScanMatic extends CordovaPlugin {
