@@ -27,6 +27,8 @@ public class ScanMatic extends CordovaPlugin {
 
 	SMViewer smViewer;
 
+	public static final String tag = "ScanMatic";
+
 	public static final int shutter = R.raw.shutter;
 	
 	public SoundPool soundPool;
@@ -53,6 +55,8 @@ public class ScanMatic extends CordovaPlugin {
 		soundPoolMap = new HashMap<Integer, Integer>(1);
 		
 		soundPoolMap.put(shutter, soundPool.load(activity, shutter, 1));
+
+		Log.d(tag, "Initialized");
 	}
 
 	@Override
@@ -65,6 +69,7 @@ public class ScanMatic extends CordovaPlugin {
     public void onResume(boolean multitasking) {
 
     	//smViewer.smCamera.resumePreview();
+    	Log.d(tag, "Resumed");
     }
 
 	public void playShutterSound() {
