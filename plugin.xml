@@ -35,4 +35,9 @@
 			
 	</platform>
 
+	<platform name="ios">
+
+
+	</platform>
+	
 </plugin>
