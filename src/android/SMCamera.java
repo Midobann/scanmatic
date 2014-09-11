@@ -274,7 +274,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 					
 //					boolean sharp = this.sharpness(inImg);
 					ByteArrayOutputStream stream = new ByteArrayOutputStream();
-					inImg.compress(Bitmap.CompressFormat.JPEG, 55, stream);
+					inImg.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 				    byte[] byteArray = stream.toByteArray();
 					
 					PluginResult pr = new PluginResult(PluginResult.Status.OK, byteArray);
