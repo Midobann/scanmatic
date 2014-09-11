@@ -172,16 +172,17 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 //		params.setPictureFormat(ImageFormat.JPEG);
 //		params.set("jpeg-quality", 20);
 //		params.setJpegQuality(20);
+		int desiredArea = 1200000;
 		List<Camera.Size> supportedSizes = params.getSupportedPictureSizes();
-		int maxArea = 0;
+		int maxAreaDiff = 100000000;
 		int maxWidth = 0;
 		int maxHeight = 0;
 		for (int i=0; i<supportedSizes.size(); i++)
 		{
 			int currentArea = supportedSizes.get(i).width * supportedSizes.get(i).height;
-			if (currentArea > maxArea)
+			if (Math.abs(currentArea - desiredArea) < maxAreaDiff)
 			{
-				maxArea = currentArea;
+				maxAreaDiff = Math.abs(currentArea - desiredArea);
 				maxWidth = supportedSizes.get(i).width;
 				maxHeight = supportedSizes.get(i).height;
 			}
@@ -280,20 +281,20 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 			if (smViewer != null) {
 				if (smViewer.captureCallback != null) {
 					
-// 					Bitmap inImg = BitmapFactory.decodeByteArray(data, 0, data.length);
+					Bitmap inImg = BitmapFactory.decodeByteArray(data, 0, data.length);
 					
-// //					Matrix matrix = new Matrix();
-// //				    matrix.postRotate(90);
-// //				    WeakReference<Bitmap> rotateBitmap;
-// //				    rotateBitmap = new WeakReference<Bitmap>(Bitmap.createBitmap(inImg, 0, 0,inImg.getWidth(), inImg.getHeight(), matrix, true));
-// //					boolean sharp = this.sharpness(inImg);
+//					Matrix matrix = new Matrix();
+//				    matrix.postRotate(90);
+//				    WeakReference<Bitmap> rotateBitmap;
+//				    rotateBitmap = new WeakReference<Bitmap>(Bitmap.createBitmap(inImg, 0, 0,inImg.getWidth(), inImg.getHeight(), matrix, true));
+//					boolean sharp = this.sharpness(inImg);
 					
-// 					ByteArrayOutputStream stream = new ByteArrayOutputStream();
-// 					inImg.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-// 				    byte[] byteArray = stream.toByteArray();
-					// PluginResult pr = new PluginResult(PluginResult.Status.OK, byteArray);
+					ByteArrayOutputStream stream = new ByteArrayOutputStream();
+					inImg.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+				    byte[] byteArray = stream.toByteArray();
+					PluginResult pr = new PluginResult(PluginResult.Status.OK, byteArray);
 
-					PluginResult pr = new PluginResult(PluginResult.Status.OK, data);
+					// PluginResult pr = new PluginResult(PluginResult.Status.OK, data);
 					pr.setKeepCallback(true);
 					smViewer.captureCallback.sendPluginResult(pr);
 				}
