@@ -172,6 +172,21 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 //		params.setPictureFormat(ImageFormat.JPEG);
 //		params.set("jpeg-quality", 20);
 //		params.setJpegQuality(20);
+		List<Camera.Size> supportedSizes = params.getSupportedPictureSizes();
+		int maxArea = 0;
+		int maxWidth = 0;
+		int maxHeight = 0;
+		for (int i=0; i<supportedSizes.size(); i++)
+		{
+			int currentArea = supportedSizes.get(i).width * supportedSizes.get(i).height;
+			if (currentArea > maxArea)
+			{
+				maxArea = currentArea;
+				maxWidth = supportedSizes.get(i).width;
+				maxHeight = supportedSizes.get(i).height;
+			}
+		}
+		params.setPictureSize(maxWidth, maxHeight);
 
 		List<String> focusModes = params.getSupportedFocusModes();
 
