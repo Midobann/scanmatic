@@ -167,7 +167,10 @@ public class ScanMatic extends CordovaPlugin {
         } else if (action.equals("onAutoFocusMove")) {
         	smViewer.autoFocusMovedCallback = callbackContext;
         	return true;
-        } 
+        } else if (action.equals("finish")) {
+        	cordova.getActivity().finish();
+        	return true;
+        }
 		return false;
     	
 	}
