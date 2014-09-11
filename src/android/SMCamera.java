@@ -265,19 +265,20 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 			if (smViewer != null) {
 				if (smViewer.captureCallback != null) {
 					
-					Bitmap inImg = BitmapFactory.decodeByteArray(data, 0, data.length);
+// 					Bitmap inImg = BitmapFactory.decodeByteArray(data, 0, data.length);
 					
-//					Matrix matrix = new Matrix();
-//				    matrix.postRotate(90);
-//				    WeakReference<Bitmap> rotateBitmap;
-//				    rotateBitmap = new WeakReference<Bitmap>(Bitmap.createBitmap(inImg, 0, 0,inImg.getWidth(), inImg.getHeight(), matrix, true));
+// //					Matrix matrix = new Matrix();
+// //				    matrix.postRotate(90);
+// //				    WeakReference<Bitmap> rotateBitmap;
+// //				    rotateBitmap = new WeakReference<Bitmap>(Bitmap.createBitmap(inImg, 0, 0,inImg.getWidth(), inImg.getHeight(), matrix, true));
+// //					boolean sharp = this.sharpness(inImg);
 					
-//					boolean sharp = this.sharpness(inImg);
-					ByteArrayOutputStream stream = new ByteArrayOutputStream();
-					inImg.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-				    byte[] byteArray = stream.toByteArray();
-					
-					PluginResult pr = new PluginResult(PluginResult.Status.OK, byteArray);
+// 					ByteArrayOutputStream stream = new ByteArrayOutputStream();
+// 					inImg.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+// 				    byte[] byteArray = stream.toByteArray();
+					// PluginResult pr = new PluginResult(PluginResult.Status.OK, byteArray);
+
+					PluginResult pr = new PluginResult(PluginResult.Status.OK, data);
 					pr.setKeepCallback(true);
 					smViewer.captureCallback.sendPluginResult(pr);
 				}
