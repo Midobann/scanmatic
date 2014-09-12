@@ -45,7 +45,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
     	}
     	catch (Exception e)
     	{
-    		int a = 1;
+    		Log("SMCamera", "cannot open camera");
     	}
     	
 	}
@@ -53,6 +53,15 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
     public JSONObject info() {
     	
     	JSONObject result = new JSONObject();
+
+    	try {
+    		if (camera == null) {
+	    		camera = Camera.open()
+	    	}
+    	} catch (Exception e) {
+    		return null;
+    	}
+
     	Camera.Parameters params = camera.getParameters();
     	
     	try {
