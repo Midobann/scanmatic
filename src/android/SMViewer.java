@@ -97,7 +97,7 @@ public class SMViewer extends SurfaceView implements SurfaceHolder.Callback, OnT
 			if (smCamera == null)
 			{
 				smCamera = new SMCamera(this);
-				smCamera.camera.setPreviewDisplay(holder);
+				smCamera.camera.setPreviewDisplay(arg0);
 			}
 			else if (smCamera != null)
 			{
