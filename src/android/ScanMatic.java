@@ -143,7 +143,7 @@ public class ScanMatic extends CordovaPlugin {
 		    		callbackContext.success(result);
 
 		    	} catch (JSONException ex) {
-		    		callbackContext.error(ex);	
+		    		callbackContext.error(ex.getLocalizedMessage());	
 		    	}
 			}
 		});	
