@@ -8,6 +8,7 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,7 +134,17 @@ public class ScanMatic extends CordovaPlugin {
 	public boolean info(final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
-				callbackContext.success(smViewer.smCamera.info());
+
+				JSONObject result = new JSONObject();
+		    	
+		    	try {
+
+		    		result.put("camera", smViewer.smCamera.info());
+		    		callbackContext.success();
+
+		    	} catch (JSONException ex) {
+		    		callbackContext.error(ex);	
+		    	}
 			}
 		});	
 		return true;
@@ -157,7 +168,7 @@ public class ScanMatic extends CordovaPlugin {
 				return startCamera(callbackContext);
 			else
 				return stopCamera(callbackContext);
-		} else if (action.equals("cameraInfo")) {
+		} else if (action.equals("info")) {
 			return info(callbackContext);
         } else if (action.equals("capture")) {
         	return capture(callbackContext);
