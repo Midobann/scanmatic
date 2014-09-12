@@ -62,7 +62,6 @@ public class ScanMatic extends CordovaPlugin {
 
 	@Override
     public void onPause(boolean multitasking) {
-    	super.onPause();
     	try{
     		smViewer.smCamera.stopPreview();
     		Log.d(tag, "Paused" + (smViewer != null ? " smViewer ok " : "smViewer null"));
@@ -91,98 +90,104 @@ public class ScanMatic extends CordovaPlugin {
 
 	
 	public boolean startCamera(final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
+		// cordova.getThreadPool().execute(new Runnable() {
+		// 	public void run() {
 				smViewer.smCamera.startPreview();
 				callbackContext.success();
-			}
-		});
+		// 	}
+		// });
 		return true;
 	}
 	
 	public boolean stopCamera(final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
+		// cordova.getThreadPool().execute(new Runnable() {
+		// 	public void run() {
 				smViewer.smCamera.stopPreview();
 				callbackContext.success();
-			}
-		});
+		// 	}
+		// });
 		return true;
 	}
 	
 	public boolean flash(final String state, final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
+		// cordova.getThreadPool().execute(new Runnable() {
+		// 	public void run() {
 				smViewer.smCamera.setFlash(state);
 				callbackContext.success();
-			}
-		});
+		// 	}
+		// });
 		return true;
 	}
 
 	public boolean capture(final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
+		// cordova.getThreadPool().execute(new Runnable() {
+		// 	public void run() {
 				smViewer.requestCapture();
 				playShutterSound();
-			}
-		});
+		// 	}
+		// });
 		callbackContext.success();
 		return true;
 	}
 
 	public boolean info(final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
+		// cordova.getThreadPool().execute(new Runnable() {
+		// 	public void run() {
 				callbackContext.success(smViewer.smCamera.info());
-			}
-		});	
+		// 	}
+		// });	
 		return true;
 	}
 
 	public boolean focus(final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
+		// cordova.getThreadPool().execute(new Runnable() {
+		// 	public void run() {
 				smViewer.smCamera.focus();
 				callbackContext.success();
-			}
-		});
+		// 	}
+		// });
 		return true;
 	}
 	
 	@Override
 	public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
+		try{
+			if (action.equals("camera")) {
+				if (args.getBoolean(0))
+					return startCamera(callbackContext);
+				else
+					return stopCamera(callbackContext);
+			} else if (action.equals("cameraInfo")) {
+				return info(callbackContext);
+	        } else if (action.equals("capture")) {
+	        	return capture(callbackContext);
+	        } else if (action.equals("focus")) {
+	        	return focus(callbackContext);
+	        } else if (action.equals("flash")) {
+	        	return flash(args.getString(0), callbackContext);
+	        } else if (action.equals("onCapture")) {
+	        	smViewer.captureCallback = callbackContext;
+	        	return true;
+	        } else if (action.equals("onPreview")) {
+	        	smViewer.previewCallback = callbackContext;
+	        	return true;
+	        } else if (action.equals("onAutoFocus")) {
+	        	smViewer.autoFocusCallback = callbackContext;
+	        	return true;
+	        } else if (action.equals("onAutoFocusMove")) {
+	        	smViewer.autoFocusMovedCallback = callbackContext;
+	        	return true;
+	        } else if (action.equals("finish")) {
+	        	cordova.getActivity().finish();
+	        	return true;
+	        }
+			return false;
+		}
+		catch(Exception e)
+		{
+			Log.e(tag, "Execute Error");
+		}
 		
-		if (action.equals("camera")) {
-			if (args.getBoolean(0))
-				return startCamera(callbackContext);
-			else
-				return stopCamera(callbackContext);
-		} else if (action.equals("cameraInfo")) {
-			return info(callbackContext);
-        } else if (action.equals("capture")) {
-        	return capture(callbackContext);
-        } else if (action.equals("focus")) {
-        	return focus(callbackContext);
-        } else if (action.equals("flash")) {
-        	return flash(args.getString(0), callbackContext);
-        } else if (action.equals("onCapture")) {
-        	smViewer.captureCallback = callbackContext;
-        	return true;
-        } else if (action.equals("onPreview")) {
-        	smViewer.previewCallback = callbackContext;
-        	return true;
-        } else if (action.equals("onAutoFocus")) {
-        	smViewer.autoFocusCallback = callbackContext;
-        	return true;
-        } else if (action.equals("onAutoFocusMove")) {
-        	smViewer.autoFocusMovedCallback = callbackContext;
-        	return true;
-        } else if (action.equals("finish")) {
-        	cordova.getActivity().finish();
-        	return true;
-        }
-		return false;
     	
 	}
 
