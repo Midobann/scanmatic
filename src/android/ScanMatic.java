@@ -132,21 +132,29 @@ public class ScanMatic extends CordovaPlugin {
 	}
 
 	public boolean info(final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
 
-				JSONObject result = new JSONObject();
+		if ((smViewer != null) && (smViewer.smCamera != null)) {
 		
-		    	try {
+			cordova.getThreadPool().execute(new Runnable() {
+				public void run() {
 
-		    		result.put("camera", smViewer.smCamera.info());
-		    		callbackContext.success(result);
+					JSONObject result = new JSONObject();
+			
+			    	try {
 
-		    	} catch (JSONException ex) {
-		    		callbackContext.error(ex.getLocalizedMessage());	
-		    	}
-			}
-		});	
+			    		result.put("camera", smViewer.smCamera.info());
+			    		callbackContext.success(result);
+
+			    	} catch (JSONException ex) {
+			    		callbackContext.error(ex.getLocalizedMessage());	
+			    	}
+				}
+			});	
+			
+		} else {
+			callbackContext.success();
+		}
+		
 		return true;
 	}
 
