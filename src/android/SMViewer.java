@@ -72,11 +72,17 @@ public class SMViewer extends SurfaceView implements SurfaceHolder.Callback, OnT
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder arg0) {
-		if (smCamera != null)
+		try{
+			if (smCamera != null)
+			{
+				smCamera.stopPreview();
+		    	smCamera = null;
+			}
+		}catch (Exception e)
 		{
-			smCamera.stopPreview();
-	    	smCamera = null;
+			Log.e("SMViewer", "IOException in surfaceDestroyed");
 		}
+		
 	}
 
 	@Override
@@ -86,7 +92,16 @@ public class SMViewer extends SurfaceView implements SurfaceHolder.Callback, OnT
 
 	@Override
 	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
-		
+		try{
+			if (smCamera != null)
+			{
+				smCamera.stopPreview();
+		    	smCamera = null;
+			}
+		}catch (Exception e)
+		{
+			Log.e("SMViewer", "IOException in surfaceChanged");
+		}
 	}
 
 }
