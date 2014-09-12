@@ -45,7 +45,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
     	}
     	catch (Exception e)
     	{
-    		Log("SMCamera", "cannot open camera");
+    		Log.e("SMCamera", "cannot open camera");
     	}
     	
 	}
