@@ -136,11 +136,11 @@ public class ScanMatic extends CordovaPlugin {
 			public void run() {
 
 				JSONObject result = new JSONObject();
-		    	
+		
 		    	try {
 
 		    		result.put("camera", smViewer.smCamera.info());
-		    		callbackContext.success();
+		    		callbackContext.success(result);
 
 		    	} catch (JSONException ex) {
 		    		callbackContext.error(ex);	
