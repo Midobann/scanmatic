@@ -186,8 +186,9 @@ public class ScanMatic extends CordovaPlugin {
 		catch(Exception e)
 		{
 			Log.e(tag, "Execute Error");
+			return false;
 		}
-		
+		return false;
     	
 	}
 
