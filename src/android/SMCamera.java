@@ -56,7 +56,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 
     	try {
     		if (camera == null) {
-	    		camera = Camera.open()
+	    		camera = Camera.open();
 	    	}
     	} catch (Exception e) {
     		return null;
