@@ -45,7 +45,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
     	}
     	catch (Exception e)
     	{
-    		return null;
+    		int a = 1;
     	}
     	
 	}
@@ -133,7 +133,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 		}
 		catch (Exception e)
 		{
-			return null;
+			int a = 1;
 		}
 	}
 
