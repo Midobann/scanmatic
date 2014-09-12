@@ -63,7 +63,7 @@ public class ScanMatic extends CordovaPlugin {
 	@Override
     public void onPause(boolean multitasking) {
     	try{
-    		smViewer.smCamera.stopPreview();
+    		// smViewer.smCamera.stopPreview();
     		Log.d(tag, "Paused" + (smViewer != null ? " smViewer ok " : "smViewer null"));
     	}catch (Exception e)
     	{
@@ -75,7 +75,7 @@ public class ScanMatic extends CordovaPlugin {
     @Override
     public void onResume(boolean multitasking) {
     	try {
-    		smViewer.smCamera.startPreview();
+    		// smViewer.smCamera.startPreview();
     		Log.d(tag, "Resumed" + (smViewer != null ? " smViewer ok " : "smViewer null"));
     	}catch (Exception e)
     	{
