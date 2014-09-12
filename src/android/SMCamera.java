@@ -38,8 +38,16 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
     SMViewer smViewer;
 
     public SMCamera(SMViewer viewer) {
-    	smViewer = viewer;
-    	camera = Camera.open();	
+    	try
+    	{
+    		smViewer = viewer;
+    		camera = Camera.open();	
+    	}
+    	catch (Exception e)
+    	{
+    		return null;
+    	}
+    	
 	}
     
     public JSONObject info() {
@@ -114,20 +122,26 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 	}
 	
 	public void stopPreview(boolean active) {
-		if (camera != null) {
-			//camera.setPreviewCallback(null);
-			camera.stopPreview();
-			camera.release();
-			camera = null;
-			active = false || active;
+		try {
+			if (camera != null) {
+				//camera.setPreviewCallback(null);
+				camera.stopPreview();
+				camera.release();
+				camera = null;
+				active = false || active;
+			}
+		}
+		catch (Exception e)
+		{
+			return null;
 		}
 	}
 
 	@SuppressLint("NewApi")
 	public void startPreview() {
 		if (camera == null) {
-			camera = Camera.open();
 			try {
+				camera = Camera.open();
 				camera.setPreviewDisplay(smViewer.surfaceHolder);
 			} catch (IOException x) {
 				Log.e("Problem setting camera holder", x.toString());
