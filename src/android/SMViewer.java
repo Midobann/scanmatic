@@ -67,6 +67,8 @@ public class SMViewer extends SurfaceView implements SurfaceHolder.Callback, OnT
 			
 	    } catch (IOException e) {
 	    	Log.e("SMViewer", "IOException in surfaceCreated");
+	    } catch (Exception e) {
+	    	Log.e("SMViewer", "Exception in surfaceCreated");
 	    }
 	}
 
@@ -93,21 +95,6 @@ public class SMViewer extends SurfaceView implements SurfaceHolder.Callback, OnT
 	@Override
 	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
 		Log.e("SMViewer", "surfaceChanged");
-		try{
-			if (smCamera == null)
-			{
-				smCamera = new SMCamera(this);
-				smCamera.camera.setPreviewDisplay(arg0);
-			}
-			else if (smCamera != null)
-			{
-				smCamera.stopPreview();
-		    	smCamera = null;
-			}
-		}catch (Exception e)
-		{
-			Log.e("SMViewer", "IOException in surfaceDestroyed");
-		}
 	}
 
 }

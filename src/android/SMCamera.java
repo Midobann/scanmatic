@@ -124,7 +124,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 	public void stopPreview(boolean active) {
 		try {
 			if (camera != null) {
-				//camera.setPreviewCallback(null);
+				camera.setPreviewCallback(null);
 				camera.stopPreview();
 				camera.release();
 				camera = null;
@@ -259,28 +259,26 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 	@SuppressWarnings("deprecation")
 	@Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-    	
-    	// if (newoverlay) {
-    	// 	newoverlay = false;
-    	// 	smViewer.overlayView.setImageDrawable(null);
-    	// 	smViewer.overlayView.setImageBitmap(overlaysnap);
-    	// 	smViewer.overlayView.setAlpha(100);
-    	// 	smViewer.overlayView.setVisibility(View.VISIBLE);
-    	// 	smViewer.overlayView.bringToFront();
-    		
-		//  }
-        
-        if (record) {
-        	Log.e("Preview Frame", "New Frame Stored...");
-        	record = false;
-        	//capturedFrames++;
-        	framePrepThread = null;
-        	framePrepThread = new Thread_FramePrep(smViewer);
-        	framePrepThread.execute(data);
-        	this.capture();
+        if (camera == null)
+        {
+        	return;
         }
-
-        camera.addCallbackBuffer(data);
+       	try{ 
+	        if (record) {
+	        	Log.e("Preview Frame", "New Frame Stored...");
+	        	record = false;
+	        	//capturedFrames++;
+	        	framePrepThread = null;
+	        	framePrepThread = new Thread_FramePrep(smViewer);
+	        	framePrepThread.execute(data);
+	        	this.capture();
+	        }
+        	camera.addCallbackBuffer(data);
+        }catch (Exception e)
+        {
+        	Log.e("SMCamera", "onPreviewFrame Issue");
+        }
+        
     }
 
     public void capture() {
