@@ -152,7 +152,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 			try {
 				camera = Camera.open();
 			} catch (IOException x) {
-				Log.e("Problem getting camera", x.toString());
+				Log.e("Problem getting camera", x.getLocalizedDescription());
 				return;
 			}
 		}
@@ -160,7 +160,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 		try {
 			camera.setPreviewDisplay(smViewer.surfaceHolder);
 		} catch (Exception e) {
-			Log.e("Problem getting camera", x.toString());
+			Log.e("Problem getting camera", e.getLocalizedDescription());
 			return;
 		}
 		
