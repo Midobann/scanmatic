@@ -151,7 +151,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 		if (camera == null) {
 			try {
 				camera = Camera.open();
-			} catch (IOException x) {
+			} catch (Exception x) {
 				Log.e("Problem getting camera", x.getLocalizedMessage());
 				return;
 			}
