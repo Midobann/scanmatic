@@ -30,6 +30,7 @@ public class ScanMatic extends CordovaPlugin {
 	SMViewer smViewer;
 
 	public static final String tag = "ScanMatic";
+	public static final String version = "0.0.1";
 
 	public static final int shutter = R.raw.shutter;
 	
@@ -142,6 +143,7 @@ public class ScanMatic extends CordovaPlugin {
 			
 			    	try {
 
+			    		result.put("version", version);
 			    		result.put("camera", smViewer.smCamera.info());
 			    		callbackContext.success(result);
 
