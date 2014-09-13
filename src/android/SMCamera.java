@@ -151,12 +151,19 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 		if (camera == null) {
 			try {
 				camera = Camera.open();
-				camera.setPreviewDisplay(smViewer.surfaceHolder);
 			} catch (IOException x) {
-				Log.e("Problem setting camera holder", x.toString());
+				Log.e("Problem getting camera", x.toString());
+				return;
 			}
-			
 		}
+		
+		try {
+			camera.setPreviewDisplay(smViewer.surfaceHolder);
+		} (Exception e) {
+			Log.e("Problem getting camera", x.toString());
+			return;
+		}
+		
 		configureCamera();
 		camera.startPreview();
 		if (android.os.Build.VERSION.SDK_INT >= 16) {
