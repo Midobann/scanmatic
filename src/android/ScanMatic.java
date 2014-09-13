@@ -65,7 +65,7 @@ public class ScanMatic extends CordovaPlugin {
 	@Override
     public void onPause(boolean multitasking) {
     	try{
-    		// smViewer.smCamera.stopPreview();
+    		smViewer.smCamera.stopPreview();
     		Log.d(tag, "Paused" + (smViewer != null ? " smViewer ok " : "smViewer null"));
     	}catch (Exception e)
     	{
@@ -87,15 +87,24 @@ public class ScanMatic extends CordovaPlugin {
     }
 
 	public void playShutterSound() {
-		soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);
+		try {
+			soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);
+		} catch (Exception e) {
+			Log.e("ScanMatic", "failed to play the shutter sound");
+		}
 	}
 
 	
 	public boolean startCamera(final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
-				smViewer.smCamera.startPreview();
-				callbackContext.success();
+				try {
+					smViewer.smCamera.startPreview();
+					callbackContext.success();
+				} catch (Exception e) {
+					callbackContext.error(e.getLocalizedMessage());
+				}
+				
 			}
 		});
 		return true;
@@ -104,8 +113,12 @@ public class ScanMatic extends CordovaPlugin {
 	public boolean stopCamera(final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
-				smViewer.smCamera.stopPreview();
-				callbackContext.success();
+				try {
+					smViewer.smCamera.stopPreview();
+					callbackContext.success();
+				} catch (Exception e) {
+					callbackContext.error(e.getLocalizedMessage());
+				}
 			}
 		});
 		return true;
@@ -114,8 +127,12 @@ public class ScanMatic extends CordovaPlugin {
 	public boolean flash(final String state, final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
-				smViewer.smCamera.setFlash(state);
-				callbackContext.success();
+				try {
+					smViewer.smCamera.setFlash(state);
+					callbackContext.success();
+				} catch (Exception e) {
+					callbackContext.error(e.getLocalizedMessage());
+				}
 			}
 		});
 		return true;
@@ -186,6 +203,9 @@ public class ScanMatic extends CordovaPlugin {
         	return focus(callbackContext);
         } else if (action.equals("flash")) {
         	return flash(args.getString(0), callbackContext);
+        } else if (action.equals("finish")) {
+        	cordova.getActivity().finish();
+        	return true;
         } else if (action.equals("onCapture")) {
         	smViewer.captureCallback = callbackContext;
         	return true;
@@ -197,9 +217,6 @@ public class ScanMatic extends CordovaPlugin {
         	return true;
         } else if (action.equals("onAutoFocusMove")) {
         	smViewer.autoFocusMovedCallback = callbackContext;
-        	return true;
-        } else if (action.equals("finish")) {
-        	cordova.getActivity().finish();
         	return true;
         }
 		return false;
