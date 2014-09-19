@@ -184,10 +184,10 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 
 	public void configureCamera() {
 		//Focus
-		boolean autofocus 		= false;
+		boolean autofocus 		= true;
 		boolean macrofocus		= false;
 		boolean edof			= false;
-		boolean continuousfocus = true;
+		boolean continuousfocus = false;
 		//Scenes
 		boolean avoidblurr		= false;
 		boolean barcode			= false;
