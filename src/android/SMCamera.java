@@ -313,9 +313,10 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 					
 					Matrix matrix = new Matrix();
 				    matrix.postRotate(90);
-				    WeakReference<Bitmap> rotateBitmap;
-				    rotateBitmap = new WeakReference<Bitmap>(Bitmap.createBitmap(inImg, 0, 0,inImg.getWidth(), inImg.getHeight(), matrix, true));
-//					boolean sharp = this.sharpness(inImg);
+				    inImg = Bitmap.createBitmap(inImg, 0, 0, inImg.getWidth(), inImg.getHeight(), matrix, true);
+				    // WeakReference<Bitmap> rotateBitmap;
+				    // rotateBitmap = new WeakReference<Bitmap>(Bitmap.createBitmap(inImg, 0, 0,inImg.getWidth(), inImg.getHeight(), matrix, true));
+					// boolean sharp = this.sharpness(inImg);
 					
 					ByteArrayOutputStream stream = new ByteArrayOutputStream();
 					inImg.compress(Bitmap.CompressFormat.JPEG, 60, stream);
