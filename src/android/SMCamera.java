@@ -32,6 +32,9 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
     public boolean newoverlay = false;
     public Bitmap overlaysnap;
     
+    public int jpegCompression = 60;
+    public int pixelsTarget = 1200000;
+
     String flash = null;
     boolean active = false;
 
@@ -202,7 +205,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 //		params.setPictureFormat(ImageFormat.JPEG);
 //		params.set("jpeg-quality", 20);
 //		params.setJpegQuality(20);
-		int desiredArea = 1200000;
+		int desiredArea = pixelsTarget;
 		List<Camera.Size> supportedSizes = params.getSupportedPictureSizes();
 		int maxAreaDiff = 100000000;
 		int maxWidth = 0;
@@ -319,7 +322,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 					// boolean sharp = this.sharpness(inImg);
 					
 					ByteArrayOutputStream stream = new ByteArrayOutputStream();
-					inImg.compress(Bitmap.CompressFormat.JPEG, 60, stream);
+					inImg.compress(Bitmap.CompressFormat.JPEG, jpegCompression, stream);
 				    byte[] byteArray = stream.toByteArray();
 					PluginResult pr = new PluginResult(PluginResult.Status.OK, byteArray);
 

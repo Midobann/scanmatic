@@ -138,6 +138,21 @@ public class ScanMatic extends CordovaPlugin {
 		return true;
 	}
 
+	public boolean setImageSpecs(final String compression, final String pixels, final CallbackContext callbackContext) {
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
+				try {
+					smViewer.smCamera.jpegCompression = Integer.parseInt(compression);
+					smViewer.smCamera.pixelsTarget = Integer.parseInt(pixels);
+					callbackContext.success();
+				} catch (Exception e) {
+					callbackContext.error(e.getLocalizedMessage());
+				}
+			}
+		});
+		return true;
+	}
+
 	public boolean capture(final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
@@ -203,6 +218,8 @@ public class ScanMatic extends CordovaPlugin {
         	return focus(callbackContext);
         } else if (action.equals("flash")) {
         	return flash(args.getString(0), callbackContext);
+        } else if (action.equals("setImageSpecs")) {
+        	return setImageSpecs(args.getString(0), args.getString(1), callbackContext);
         } else if (action.equals("finish")) {
         	cordova.getActivity().finish();
         	return true;
