@@ -138,6 +138,7 @@ public class ScanMatic extends CordovaPlugin {
 		return true;
 	}
 
+	//setting capture dimensions and compression
 	public boolean setImageSpecs(final String compression, final String pixels, final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
