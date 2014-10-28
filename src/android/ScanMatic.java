@@ -144,6 +144,10 @@ public class ScanMatic extends CordovaPlugin {
 				try {
 					smViewer.smCamera.jpegCompression = Integer.parseInt(compression);
 					smViewer.smCamera.pixelsTarget = Integer.parseInt(pixels);
+					if (smViewer.smCamera.active)
+					{
+						smViewer.smCamera.startPreview();
+					}
 					callbackContext.success();
 				} catch (Exception e) {
 					callbackContext.error(e.getLocalizedMessage());

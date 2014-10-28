@@ -36,7 +36,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
     public int pixelsTarget = 1200000;
 
     String flash = null;
-    boolean active = false;
+    public boolean active = false;
 
     SMViewer smViewer;
 
