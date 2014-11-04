@@ -202,25 +202,76 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 		//Camera Parameters Container
 		Camera.Parameters params = camera.getParameters();
 
-//		params.setPictureFormat(ImageFormat.JPEG);
-//		params.set("jpeg-quality", 20);
-//		params.setJpegQuality(20);
+
+		//Set picture size
 		int desiredArea = pixelsTarget;
 		List<Camera.Size> supportedSizes = params.getSupportedPictureSizes();
-		int maxAreaDiff = 100000000;
-		int maxWidth = 0;
-		int maxHeight = 0;
+		
+		Camera.Size best1 = new Camera.Size(100000, 100000);
+		Camera.Size best2 = new Camera.Size(100001, 100001);
+		
 		for (int i=0; i<supportedSizes.size(); i++)
 		{
 			int currentArea = supportedSizes.get(i).width * supportedSizes.get(i).height;
-			if (Math.abs(currentArea - desiredArea) < maxAreaDiff)
+			int currentAreaDiff = Math.abs(desiredArea - currentArea);
+			int best1AreaDiff = Math.abs(desiredArea - (best1.width * best1.height));
+			int best2AreaDiff = Math.abs(desiredArea - (best2.width * best2.height));
+
+			if (currentAreaDiff < best2AreaDiff)
 			{
-				maxAreaDiff = Math.abs(currentArea - desiredArea);
-				maxWidth = supportedSizes.get(i).width;
-				maxHeight = supportedSizes.get(i).height;
+				if (currentAreaDiff < best1AreaDiff)
+				{
+					best2 = best1;
+					best1 = supportedSizes.get(i);
+				}
+				else
+				{
+					best2 = supportedSizes.get(i);
+				}
 			}
 		}
-		params.setPictureSize(maxWidth, maxHeight);
+
+		if (((best2.width * best2.height) > (2.5 * desiredArea)) || 
+			((best2.width * best2.height) < (0.7 * desiredArea)))
+		{
+			params.setPictureSize(best1.width, best1.height);
+		}
+		else if (((best1.width * best1.height) > (2.5 * desiredArea)) || 
+				 ((best1.width * best1.height) < (0.7 * desiredArea)))
+		{
+			params.setPictureSize(best2.width, best2.height);
+		}
+		else
+		{
+			if ((best1.width / best1.height) >= (best2.width / best2.height))
+			{
+				params.setPictureSize(best1.width, best1.height);
+			}
+			else
+			{
+				params.setPictureSize(best2.width, best2.height);
+			}
+		}
+
+		
+
+
+		// int desiredArea = pixelsTarget;
+		// List<Camera.Size> supportedSizes = params.getSupportedPictureSizes();
+		// int maxAreaDiff = 100000000;
+		// int maxWidth = 0;
+		// int maxHeight = 0;
+		// for (int i=0; i<supportedSizes.size(); i++)
+		// {
+		// 	int currentArea = supportedSizes.get(i).width * supportedSizes.get(i).height;
+		// 	if (Math.abs(currentArea - desiredArea) < maxAreaDiff)
+		// 	{
+		// 		maxAreaDiff = Math.abs(currentArea - desiredArea);
+		// 		maxWidth = supportedSizes.get(i).width;
+		// 		maxHeight = supportedSizes.get(i).height;
+		// 	}
+		// }
+		// params.setPictureSize(maxWidth, maxHeight);
 
 		List<String> focusModes = params.getSupportedFocusModes();
 
