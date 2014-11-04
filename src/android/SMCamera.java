@@ -207,8 +207,8 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 		int desiredArea = pixelsTarget;
 		List<Camera.Size> supportedSizes = params.getSupportedPictureSizes();
 		
-		Camera.Size best1 = new Camera.Size(100000, 100000);
-		Camera.Size best2 = new Camera.Size(100001, 100001);
+		Camera.Size best1 = (Camera.Size)(100000, 100000);
+		Camera.Size best2 = (Camera.Size)(100001, 100001);
 		
 		for (int i=0; i<supportedSizes.size(); i++)
 		{
