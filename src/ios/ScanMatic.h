@@ -10,7 +10,18 @@
 #import <AVFoundation/AVFoundation.h>
 
 
-@interface ScanMatic : CDVPlugin
+@interface ScanMatic : CDVPlugin 
+{
+	AVCaptureSession *session;
+// 	IBOutlet UIView *cameraPreview;
+}
+
+@property(nonatomic, retain) IBOutlet UIView *cameraPreview;
+
+- (void)pluginInitialize;
+
+- (void) onPause;
+- (void) onResume;
 
 - (void)info:(CDVInvokedUrlCommand*)command;
 - (void)camera:(CDVInvokedUrlCommand*)command;
@@ -18,10 +29,10 @@
 - (void)focus:(CDVInvokedUrlCommand*)command;
 - (void)flash:(CDVInvokedUrlCommand*)command;
 - (void)finish:(CDVInvokedUrlCommand*)command;
+
 - (void)onCapture:(CDVInvokedUrlCommand*)command;
 - (void)onPreview:(CDVInvokedUrlCommand*)command;
 - (void)onAutoFocus:(CDVInvokedUrlCommand*)command;
 - (void)onAutoFocusMove:(CDVInvokedUrlCommand*)command;
-
 
 @end

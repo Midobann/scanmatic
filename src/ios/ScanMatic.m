@@ -10,7 +10,63 @@
 
 @implementation ScanMatic
 
+@synthesize cameraPreview;
+
 NSString* version = @"0.0.1";
+
+
+- (void)pluginInitialize {
+    
+    [super pluginInitialize];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPause) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume) name:UIApplicationWillEnterForegroundNotification object:nil];
+
+    CGRect viewBounds = self.viewController.view.bounds;
+
+    viewBounds.origin = self.viewController.view.bounds.origin;
+
+    //self.webView = [self newCordovaViewWithFrame:viewBounds];
+    //self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+
+    //[self.viewController.view addSubview:self.webView];
+    //[self.viewController.view sendSubviewToBack:self.webView];
+
+    session = [[AVCaptureSession alloc] init];
+
+    session.sessionPreset = AVCaptureSessionPresetMedium;
+
+    CALayer *viewLayer = self.cameraPreview.layer;
+
+    AVCaptureVideoPreviewLayer *captureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:session];
+
+    captureVideoPreviewLayer.frame = self.cameraPreview.bounds;
+    [self.cameraPreview.layer addSublayer:captureVideoPreviewLayer];
+
+    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+
+    NSError *error = nil;
+    AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:device error:&error];
+    if (!input) {
+        // Handle the error appropriately.
+        NSLog(@"ERROR: trying to open camera: %@", error);
+    }
+    [session addInput:input];
+}
+
+- (void)dealloc {
+    [cameraPreview release];
+    [super dealloc];
+}
+
+- (void)onPause {
+
+}
+
+- (void)onResume {
+
+}
+
 
 - (void)info:(CDVInvokedUrlCommand*)command {
     
@@ -57,7 +113,7 @@ NSString* version = @"0.0.1";
 }
 
 - (void)camera:(CDVInvokedUrlCommand*)command {
-    
+    [session startRunning];
 }
 
 
