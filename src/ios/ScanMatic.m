@@ -25,18 +25,16 @@ NSString* version = @"0.0.1";
     CGRect viewBounds = self.viewController.view.bounds;
 
     viewBounds.origin = self.viewController.view.bounds.origin;
-
-    //self.webView = [self newCordovaViewWithFrame:viewBounds];
-    //self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-
-    //[self.viewController.view addSubview:self.webView];
-    //[self.viewController.view sendSubviewToBack:self.webView];
+    
+    cameraPreview = [[UIView alloc] initWithFrame:viewBounds];
+    cameraPreview.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    
+    [self.viewController.view addSubview:self.cameraPreview];
+    [self.viewController.view sendSubviewToBack:self.cameraPreview];
 
     session = [[AVCaptureSession alloc] init];
 
     session.sessionPreset = AVCaptureSessionPresetMedium;
-
-    CALayer *viewLayer = self.cameraPreview.layer;
 
     AVCaptureVideoPreviewLayer *captureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:session];
 
@@ -108,12 +106,16 @@ NSString* version = @"0.0.1";
     }
     
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:info];
-	
-	[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)camera:(CDVInvokedUrlCommand*)command {
     [session startRunning];
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 
