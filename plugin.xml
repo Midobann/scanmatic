@@ -43,8 +43,8 @@
 		    </feature>
 		</config-file>
 
-		<source-file src="src/ios/ScanMatic.h" target-dir=""/>
-		<source-file src="src/ios/ScanMatic.m" target-dir=""/>
+		<header-file src="src/ios/ScanMatic.h"/>
+		<source-file src="src/ios/ScanMatic.m"/>
 	</platform>
 	
 </plugin>
