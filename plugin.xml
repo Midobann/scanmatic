@@ -36,15 +36,15 @@
 	</platform>
 
 	<platform name="ios">
-		<config-file target="app/config.xml" parent="/*">
+		<config-file target="config.xml" parent="/*">
 			<feature name="ScanMatic">
 		        <param name="ios-package" value="ScanMatic" />
 		        <param name="onload" value="true" />
 		    </feature>
 		</config-file>
 
-		<source-file src="src/ios/ScanMatic.h" target-dir="app/Plugins/com.spendmatic.scanmatic"/>
-		<source-file src="src/ios/ScanMatic.m" target-dir="app/Plugins/com.spendmatic.scanmatic"/>
+		<source-file src="src/ios/ScanMatic.h" target-dir=""/>
+		<source-file src="src/ios/ScanMatic.m" target-dir=""/>
 	</platform>
 	
 </plugin>
