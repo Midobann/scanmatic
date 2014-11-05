@@ -243,7 +243,14 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 		}
 		else
 		{
-			if ((best1.width / best1.height) >= (best2.width / best2.height))
+			Camera.Size previewSize = params.getPreviewSize();
+			float previewRatio = previewSize.width / previewSize.height;
+			float best1Ratio = best1.width / best1.height;
+			float best2Ratio = best2.width / best2.height;
+			float best1RatioDelta = Math.abs(previewRatio - best1Ratio);
+			float best2RatioDelta = Math.abs(previewRatio - best2Ratio);
+
+			if (best1RatioDelta <= best2RatioDelta)
 			{
 				params.setPictureSize(best1.width, best1.height);
 			}
@@ -252,9 +259,6 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 				params.setPictureSize(best2.width, best2.height);
 			}
 		}
-
-		
-
 
 		// int desiredArea = pixelsTarget;
 		// List<Camera.Size> supportedSizes = params.getSupportedPictureSizes();
