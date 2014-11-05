@@ -55,8 +55,8 @@ NSString* version = @"0.0.1";
 }
 
 - (void)dealloc {
-    [cameraPreview release];
-    [super dealloc];
+    //[cameraPreview release];
+    //[super dealloc];
 }
 
 - (void)onPause {
