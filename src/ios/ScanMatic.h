@@ -13,6 +13,7 @@
 @interface ScanMatic : CDVPlugin 
 {
 	AVCaptureSession *session;
+	AVCaptureDeviceInput *cameraInput;
 // 	IBOutlet UIView *cameraPreview;
 }
 
