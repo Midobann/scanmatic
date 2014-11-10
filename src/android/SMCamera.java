@@ -403,7 +403,14 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 							output = new FileOutputStream(imageFile);
 							stream.writeTo(output);
 							output.close();
-							pr = new PluginResult(PluginResult.Status.OK, imageFile.getName());
+							
+							JSONObject fileRecord = new JSONObject();
+							fileRecord.put("name", imageFile.getName());
+							fileRecord.put("size", imageFile.length());
+							fileRecord.put("type", "image/jpeg");
+							fileRecord.put("lastModified", imageFile.lastModified());
+							
+							pr = new PluginResult(PluginResult.Status.OK, fileRecord);
 							pr.setKeepCallback(true);
 							smViewer.captureCallback.sendPluginResult(pr);
 						} catch (Exception ex) {
