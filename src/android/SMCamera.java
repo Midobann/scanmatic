@@ -1,6 +1,9 @@
 package com.spendmatic.scanmatic;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -11,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -339,9 +343,8 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
         }
        	try{ 
 	        if (record) {
-	        	Log.e("Preview Frame", "New Frame Stored...");
+	        	Log.e("SMCamera", "Capture preview");
 	        	record = false;
-	        	//capturedFrames++;
 	        	framePrepThread = null;
 	        	framePrepThread = new Thread_FramePrep(smViewer);
 	        	framePrepThread.execute(data);
@@ -357,7 +360,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 
     public void capture() {
     	camera.takePicture(null, null, this);
-    	Log.e("Preview Frame", "New Picture Captured...");
+    	Log.e("SMCamera", "Capture requested...");
     }
 
 
@@ -378,12 +381,37 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 					
 					ByteArrayOutputStream stream = new ByteArrayOutputStream();
 					inImg.compress(Bitmap.CompressFormat.JPEG, jpegCompression, stream);
-				    byte[] byteArray = stream.toByteArray();
-					PluginResult pr = new PluginResult(PluginResult.Status.OK, byteArray);
-
-					// PluginResult pr = new PluginResult(PluginResult.Status.OK, data);
-					pr.setKeepCallback(true);
-					smViewer.captureCallback.sendPluginResult(pr);
+					
+					Context context = smViewer.getContext();
+					File cache = context.getCacheDir();
+					
+					String path = cache.getAbsolutePath();
+					File imageFile = null;
+					PluginResult pr = null;
+					FileOutputStream output = null;
+					
+					try {
+						imageFile = File.createTempFile("original_", ".jpg", cache);
+					} catch (IOException e) {
+						pr = new PluginResult(PluginResult.Status.ERROR, "failed to create a file for image");
+						pr.setKeepCallback(true);
+						smViewer.captureCallback.sendPluginResult(pr);
+					}
+					
+					if (imageFile != null) {
+						try {
+							output = new FileOutputStream(imageFile);
+							stream.writeTo(output);
+							output.close();
+							pr = new PluginResult(PluginResult.Status.OK, imageFile.getAbsolutePath());
+							pr.setKeepCallback(true);
+							smViewer.captureCallback.sendPluginResult(pr);
+						} catch (Exception ex) {
+							pr = new PluginResult(PluginResult.Status.ERROR, "failed to save image to file");
+							pr.setKeepCallback(true);
+							smViewer.captureCallback.sendPluginResult(pr);
+						}
+					}
 				}
 			}
         	camera.startPreview();

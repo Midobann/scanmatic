@@ -1,5 +1,7 @@
 package com.spendmatic.scanmatic;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import org.apache.cordova.CallbackContext;
@@ -179,9 +181,14 @@ public class ScanMatic extends CordovaPlugin {
 					JSONObject result = new JSONObject();
 			
 			    	try {
-
+			    		
+			    		JSONObject cacheInfo = new JSONObject();
+			    		File cache = cordova.getActivity().getCacheDir();
+			    		cacheInfo.put("freeSpace", cache.getUsableSpace());
+			    		
 			    		result.put("version", version);
 			    		result.put("camera", smViewer.smCamera.info());
+			    		result.put("cache", cacheInfo);
 			    		callbackContext.success(result);
 
 			    	} catch (JSONException ex) {
