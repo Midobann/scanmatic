@@ -22,6 +22,7 @@ NSString* version = @"0.0.1";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPause) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume) name:UIApplicationWillEnterForegroundNotification object:nil];
 
+    
     CGRect viewBounds = self.viewController.view.bounds;
 
     viewBounds.origin = self.viewController.view.bounds.origin;
@@ -29,9 +30,8 @@ NSString* version = @"0.0.1";
     cameraPreview = [[UIView alloc] initWithFrame:viewBounds];
     cameraPreview.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     
-    [self.viewController.view addSubview:self.cameraPreview];
-    [self.viewController.view sendSubviewToBack:self.cameraPreview];
-
+    [self.viewController.view insertSubview:self.cameraPreview belowSubview:self.webView];
+    
     session = [[AVCaptureSession alloc] init];
 
     session.sessionPreset = AVCaptureSessionPresetMedium;
@@ -40,22 +40,8 @@ NSString* version = @"0.0.1";
 
     captureVideoPreviewLayer.frame = self.cameraPreview.bounds;
     [self.cameraPreview.layer addSublayer:captureVideoPreviewLayer];
-
-    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-
-    NSError *error = nil;
-    AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:device error:&error];
-    if (!input) {
-        // Handle the error appropriately.
-        NSLog(@"ERROR: trying to open camera: %@", error);
-    }
-    [session addInput:input];
 }
 
-- (void)dealloc {
-    //[cameraPreview release];
-    //[super dealloc];
-}
 
 - (void)onPause {
 
@@ -111,11 +97,62 @@ NSString* version = @"0.0.1";
 }
 
 - (void)camera:(CDVInvokedUrlCommand*)command {
-    [session startRunning];
     
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    self.webView.opaque = NO;
+    self.webView.backgroundColor = [UIColor clearColor];
     
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    bool enable = (bool)[command.arguments objectAtIndex:0];
+    
+    CDVPluginResult* pluginResult;
+    
+    if (enable) {
+        
+                
+        NSError *error = nil;
+        
+        if (!cameraInput) {
+            AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+            cameraInput = [AVCaptureDeviceInput deviceInputWithDevice:device error:&error];
+        }
+        
+        if (!cameraInput) {
+            // Handle the error appropriately.
+            NSLog(@"ERROR: trying to open camera: %@", error);
+            
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            
+        } else {
+            
+            [session addInput:cameraInput];
+            [session startRunning];
+            
+            
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            
+        }
+            
+    } else {
+        if (!cameraInput) {
+        
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"camera was never started"];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        
+        } else {
+            
+            [session removeInput:cameraInput];
+            [session stopRunning];
+            
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }
+        
+        
+    }
+    
+    
+    
 }
 
 
