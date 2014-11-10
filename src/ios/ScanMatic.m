@@ -244,11 +244,29 @@ NSString* version = @"0.0.1";
 }
 
 - (void)onPause {
+    if (cameraInput) {
+        [session removeInput:cameraInput];
+        [session stopRunning];
+    }
+}
+
+- (void)setImageSpecs:(CDVInvokedUrlCommand*)command {
+   
+    CDVPluginResult* pluginResult;
     
+    jpegCompression = [command.arguments objectAtIndex:0];
+    pixelsTarget = [command.arguments objectAtIndex:1];
+    
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
 }
 
 - (void)finish:(CDVInvokedUrlCommand*)command {
-    
+    CDVPluginResult* pluginResult;
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"not supported on iOS"];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
 }
 
 - (void)capture:(CDVInvokedUrlCommand*)command {

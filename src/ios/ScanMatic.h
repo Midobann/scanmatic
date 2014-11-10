@@ -20,7 +20,9 @@
     NSString *callbackCapture;
     NSString *callbackPreview;
     
-// 	IBOutlet UIView *cameraPreview;
+    NSNumber *jpegCompression;
+    NSNumber *pixelsTarget;
+
 }
 
 @property(nonatomic, retain) IBOutlet UIView *cameraPreview;
@@ -36,6 +38,7 @@
 - (void)focus:(CDVInvokedUrlCommand*)command;
 - (void)flash:(CDVInvokedUrlCommand*)command;
 - (void)finish:(CDVInvokedUrlCommand*)command;
+- (void)setImageSpecs:(CDVInvokedUrlCommand*)command;
 
 - (void)onCapture:(CDVInvokedUrlCommand*)command;
 - (void)onPreview:(CDVInvokedUrlCommand*)command;
