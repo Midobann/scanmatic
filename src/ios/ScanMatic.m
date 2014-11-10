@@ -43,15 +43,6 @@ NSString* version = @"0.0.1";
 }
 
 
-- (void)onPause {
-
-}
-
-- (void)onResume {
-
-}
-
-
 - (void)info:(CDVInvokedUrlCommand*)command {
     
     NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
@@ -86,7 +77,8 @@ NSString* version = @"0.0.1";
                     [flashModes addObject:@"torch"];
                 }
                 
-                [info setObject:flashModes forKey:@"flashModes"];
+                [camera setObject:flashModes forKey:@"flashModes"];
+                [info setObject:camera forKey:@"camera"];
             }
         }
     }
@@ -101,13 +93,17 @@ NSString* version = @"0.0.1";
     self.webView.opaque = NO;
     self.webView.backgroundColor = [UIColor clearColor];
     
-    bool enable = (bool)[command.arguments objectAtIndex:0];
+    
+    NSNumber *enable = [command.arguments objectAtIndex:0];
+    
+    if(![enable isKindOfClass:[NSNumber class]]) {
+        enable = [NSNumber numberWithBool:NO];
+    }
     
     CDVPluginResult* pluginResult;
     
-    if (enable) {
+    if ([enable boolValue]) {
         
-                
         NSError *error = nil;
         
         if (!cameraInput) {
@@ -134,8 +130,9 @@ NSString* version = @"0.0.1";
         }
             
     } else {
-        if (!cameraInput) {
         
+        if (!cameraInput) {
+
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"camera was never started"];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         
@@ -147,24 +144,106 @@ NSString* version = @"0.0.1";
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         }
-        
-        
     }
-    
-    
-    
 }
 
-
-- (void)capture:(CDVInvokedUrlCommand*)command {
-    
-}
 
 - (void)focus:(CDVInvokedUrlCommand*)command {
     
+    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    
+    int flags = NSKeyValueObservingOptionNew;
+    [device addObserver:self forKeyPath:@"adjustingFocus" options:flags context:nil];
+    
+    [device lockForConfiguration:nil];
+    
+    if ([device isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
+        [device setFocusMode:AVCaptureFocusModeAutoFocus];
+    }
+    
+    [device unlockForConfiguration];
+    
+    
+
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if( [keyPath isEqualToString:@"adjustingFocus"] ){
+        BOOL adjustingFocus = [ [change objectForKey:NSKeyValueChangeNewKey] isEqualToNumber:[NSNumber numberWithInt:1] ];
+        NSLog(@"Is adjusting focus? %@", adjustingFocus ? @"YES" : @"NO" );
+       
+        if (adjustingFocus)
+        {
+            CDVPluginResult* pluginResult;
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            pluginResult.keepCallback = [NSNumber numberWithBool:YES];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackFocusMoved];
+        }
+        else
+        {
+            CDVPluginResult* pluginResult;
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES];
+            pluginResult.keepCallback = [NSNumber numberWithBool:YES];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackAutoFocus];
+        }
+    }
+}
+
+
+
+
 - (void)flash:(CDVInvokedUrlCommand*)command {
+
+    CDVPluginResult* pluginResult;
+    
+    NSString *flashState = [command.arguments objectAtIndex:0];
+    
+    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    [device lockForConfiguration:nil];
+    
+    if ([flashState  isEqual: @"torch"])
+    {
+        [device setTorchMode:AVCaptureTorchModeOn];
+        [device setFlashMode:AVCaptureFlashModeOn];
+    }
+    else if ([flashState  isEqual: @"auto"])
+    {
+        [device setTorchMode:AVCaptureTorchModeOff];
+        [device setFlashMode:AVCaptureFlashModeAuto];
+    }
+    else if ([flashState  isEqual: @"off"])
+    {
+        [device setTorchMode:AVCaptureTorchModeOff];
+        [device setFlashMode:AVCaptureFlashModeOff];
+    }
+    [device unlockForConfiguration];
+    
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
+- (void)onCapture:(CDVInvokedUrlCommand*)command {
+    callbackCapture = command.callbackId;
+}
+
+- (void)onPreview:(CDVInvokedUrlCommand*)command {
+    callbackPreview = command.callbackId;
+}
+
+- (void)onAutoFocus:(CDVInvokedUrlCommand*)command {
+    callbackAutoFocus = command.callbackId;
+}
+
+- (void)onAutoFocusMove:(CDVInvokedUrlCommand*)command {
+    callbackFocusMoved = command.callbackId;
+}
+
+- (void)onResume {
+    NSLog(@"Resuming application");
+}
+
+- (void)onPause {
     
 }
 
@@ -172,21 +251,10 @@ NSString* version = @"0.0.1";
     
 }
 
-- (void)onCapture:(CDVInvokedUrlCommand*)command {
+- (void)capture:(CDVInvokedUrlCommand*)command {
     
 }
 
-- (void)onPreview:(CDVInvokedUrlCommand*)command {
-    
-}
-
-- (void)onAutoFocus:(CDVInvokedUrlCommand*)command {
-    
-}
-
-- (void)onAutoFocusMove:(CDVInvokedUrlCommand*)command {
-    
-}
 
 
 @end

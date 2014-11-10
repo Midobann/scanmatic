@@ -14,6 +14,12 @@
 {
 	AVCaptureSession *session;
 	AVCaptureDeviceInput *cameraInput;
+   
+    NSString *callbackAutoFocus;
+    NSString *callbackFocusMoved;
+    NSString *callbackCapture;
+    NSString *callbackPreview;
+    
 // 	IBOutlet UIView *cameraPreview;
 }
 
