@@ -391,7 +391,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 					FileOutputStream output = null;
 					
 					try {
-						imageFile = File.createTempFile("original_", ".jpg", cache);
+						imageFile = File.createTempFile("original", ".jpg", cache);
 					} catch (IOException e) {
 						pr = new PluginResult(PluginResult.Status.ERROR, "failed to create a file for image");
 						pr.setKeepCallback(true);
@@ -403,7 +403,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 							output = new FileOutputStream(imageFile);
 							stream.writeTo(output);
 							output.close();
-							pr = new PluginResult(PluginResult.Status.OK, imageFile.getAbsolutePath());
+							pr = new PluginResult(PluginResult.Status.OK, imageFile.getName());
 							pr.setKeepCallback(true);
 							smViewer.captureCallback.sendPluginResult(pr);
 						} catch (Exception ex) {
