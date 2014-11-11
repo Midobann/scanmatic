@@ -34,9 +34,7 @@ NSString* version = @"0.0.1";
     
     session = [[AVCaptureSession alloc] init];
 
-    NSLog(@"PIXELS_TARGET: %@", pixelsTarget);
-    NSLog(@"JPEG_COMPRESSION: %@", jpegCompression);
-    session.sessionPreset = AVCaptureSessionPresetPhoto;
+    session.sessionPreset = AVCaptureSessionPresetMedium;
 
     AVCaptureVideoPreviewLayer *captureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:session];
 
@@ -135,11 +133,12 @@ NSString* version = @"0.0.1";
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
             
         } else {
-            session.sessionPreset = AVCaptureSessionPresetLow;
             
+            [session beginConfiguration];
+            [self setCaptureSize];
             [session addInput:cameraInput];
             [session startRunning];
-
+            [session commitConfiguration];
             
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -155,8 +154,11 @@ NSString* version = @"0.0.1";
         
         } else {
             
+            [session beginConfiguration];
             [session removeInput:cameraInput];
             [session stopRunning];
+            [session commitConfiguration];
+
             
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -284,7 +286,9 @@ NSString* version = @"0.0.1";
 - (void)capture:(CDVInvokedUrlCommand*)command {
     
     cameraOutput = [[AVCaptureStillImageOutput alloc] init];
+    [session beginConfiguration];
     [session addOutput:cameraOutput];
+    [session commitConfiguration];
     
     NSDictionary *outputSettings = @{ AVVideoCodecKey : AVVideoCodecJPEG};
     [cameraOutput setOutputSettings:outputSettings];
@@ -302,6 +306,11 @@ NSString* version = @"0.0.1";
     
     [cameraOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler:
         ^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
+            
+            [session beginConfiguration];
+            [session removeOutput:cameraOutput];
+            [session commitConfiguration];
+            
             NSData *jpeg = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer] ;
             if (jpeg) {
                 
@@ -328,7 +337,6 @@ NSString* version = @"0.0.1";
                 
                 //notify javascript
                 BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:dataPath];
-                [session removeOutput:cameraOutput];
                 if (fileExists)
                 {
                     NSMutableDictionary* fileRecord = [NSMutableDictionary dictionary];
@@ -352,6 +360,46 @@ NSString* version = @"0.0.1";
                 }
             }
      }];
+}
+
+- (void)setCaptureSize {
+    
+    NSLog(@"PIXELS_TARGET: %@", pixelsTarget);
+    NSLog(@"JPEG_COMPRESSION: %@", jpegCompression);
+    
+    NSMutableArray* formats = [NSMutableArray array];
+    [formats addObject:@"AVCaptureSessionPreset352x288"];
+    [formats addObject:@"AVCaptureSessionPreset640x480"];
+    [formats addObject:@"AVCaptureSessionPreset1280x720"];
+    [formats addObject:@"AVCaptureSessionPreset1920x1080"];
+    [formats addObject:@"AVCaptureSessionPresetPhoto"];
+    
+    NSMutableArray* sizes = [NSMutableArray array];
+    [sizes addObject:[NSNumber numberWithInt:101376]];
+    [sizes addObject:[NSNumber numberWithInt:307200]];
+    [sizes addObject:[NSNumber numberWithInt:921600]];
+    [sizes addObject:[NSNumber numberWithInt:2073600]];
+    [sizes addObject:[NSNumber numberWithInt:5000000]];
+    
+    int distance = 10000000;
+    int finalIndex = 0;
+    for(int i = 0 ; i < sizes.count; i++)
+    {
+        NSNumber *val = [sizes objectAtIndex:i];
+        int valDist = abs(([val intValue])-([pixelsTarget intValue]));
+        if (valDist > distance)
+        {
+            break;
+        }
+        else
+        {
+            distance = valDist;
+            finalIndex = i;
+        }
+    }
+    
+    NSString *captureFormat = [formats objectAtIndex:finalIndex];
+    session.sessionPreset = captureFormat;
 }
 
 
