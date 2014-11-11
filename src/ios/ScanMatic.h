@@ -8,13 +8,16 @@
 
 #import <Cordova/CDVPlugin.h>
 #import <AVFoundation/AVFoundation.h>
+#import <ImageIO/CGImageProperties.h>
 
 
 @interface ScanMatic : CDVPlugin 
 {
-	AVCaptureSession *session;
-	AVCaptureDeviceInput *cameraInput;
-   
+    AVCaptureSession *session;
+    AVCaptureDevice *cameraHandle;
+    AVCaptureDeviceInput *cameraInput;
+    AVCaptureStillImageOutput *cameraOutput;
+    
     NSString *callbackAutoFocus;
     NSString *callbackFocusMoved;
     NSString *callbackCapture;

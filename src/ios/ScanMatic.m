@@ -63,6 +63,8 @@ NSString* version = @"0.0.1";
                 
                 [camera setObject:[device localizedName] forKey:@"name"];
                 
+                cameraHandle = device;
+                
                 if (device.hasFlash && device.flashAvailable) {
                     if ([device isFlashModeSupported:AVCaptureFlashModeOn]) {
                         [flashModes addObject:@"on"];
@@ -106,9 +108,21 @@ NSString* version = @"0.0.1";
         
         NSError *error = nil;
         
+        if (!cameraHandle)
+        {
+            NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+            for (AVCaptureDevice *device in devices) {
+                if ([device hasMediaType:AVMediaTypeVideo]) {
+                    if ([device position] == AVCaptureDevicePositionBack) {
+                        cameraHandle = device;
+                    }
+                }
+            }
+        }
+        
         if (!cameraInput) {
-            AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-            cameraInput = [AVCaptureDeviceInput deviceInputWithDevice:device error:&error];
+            // AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+            cameraInput = [AVCaptureDeviceInput deviceInputWithDevice:cameraHandle error:&error];
         }
         
         if (!cameraInput) {
@@ -120,9 +134,11 @@ NSString* version = @"0.0.1";
             
         } else {
             
+            cameraOutput = [[AVCaptureStillImageOutput alloc] init];
             [session addInput:cameraInput];
+            [session addOutput:cameraOutput];
             [session startRunning];
-            
+
             
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -150,18 +166,16 @@ NSString* version = @"0.0.1";
 
 - (void)focus:(CDVInvokedUrlCommand*)command {
     
-    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    
     int flags = NSKeyValueObservingOptionNew;
-    [device addObserver:self forKeyPath:@"adjustingFocus" options:flags context:nil];
+    [cameraHandle addObserver:self forKeyPath:@"adjustingFocus" options:flags context:nil];
     
-    [device lockForConfiguration:nil];
+    [cameraHandle lockForConfiguration:nil];
     
-    if ([device isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
-        [device setFocusMode:AVCaptureFocusModeAutoFocus];
+    if ([cameraHandle isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
+        [cameraHandle setFocusMode:AVCaptureFocusModeAutoFocus];
     }
     
-    [device unlockForConfiguration];
+    [cameraHandle unlockForConfiguration];
     
     
 
@@ -195,28 +209,25 @@ NSString* version = @"0.0.1";
 - (void)flash:(CDVInvokedUrlCommand*)command {
 
     CDVPluginResult* pluginResult;
-    
     NSString *flashState = [command.arguments objectAtIndex:0];
-    
-    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    [device lockForConfiguration:nil];
+    [cameraHandle lockForConfiguration:nil];
     
     if ([flashState  isEqual: @"torch"])
     {
-        [device setTorchMode:AVCaptureTorchModeOn];
-        [device setFlashMode:AVCaptureFlashModeOn];
+        [cameraHandle setTorchMode:AVCaptureTorchModeOn];
+        [cameraHandle setFlashMode:AVCaptureFlashModeOn];
     }
     else if ([flashState  isEqual: @"auto"])
     {
-        [device setTorchMode:AVCaptureTorchModeOff];
-        [device setFlashMode:AVCaptureFlashModeAuto];
+        [cameraHandle setTorchMode:AVCaptureTorchModeOff];
+        [cameraHandle setFlashMode:AVCaptureFlashModeAuto];
     }
     else if ([flashState  isEqual: @"off"])
     {
-        [device setTorchMode:AVCaptureTorchModeOff];
-        [device setFlashMode:AVCaptureFlashModeOff];
+        [cameraHandle setTorchMode:AVCaptureTorchModeOff];
+        [cameraHandle setFlashMode:AVCaptureFlashModeOff];
     }
-    [device unlockForConfiguration];
+    [cameraHandle unlockForConfiguration];
     
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -270,6 +281,42 @@ NSString* version = @"0.0.1";
 }
 
 - (void)capture:(CDVInvokedUrlCommand*)command {
+    
+    NSDictionary *outputSettings = @{ AVVideoCodecKey : AVVideoCodecJPEG};
+    [cameraOutput setOutputSettings:outputSettings];
+    
+    AVCaptureConnection *videoConnection = nil;
+    for (AVCaptureConnection *connection in cameraOutput.connections) {
+        for (AVCaptureInputPort *port in [connection inputPorts]) {
+            if ([[port mediaType] isEqual:AVMediaTypeVideo] ) {
+                videoConnection = connection;
+                break;
+            }
+        }
+        if (videoConnection) { break; }
+    }
+    
+    [cameraOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler:
+        ^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
+            CFDictionaryRef exifAttachments = CMGetAttachment(imageSampleBuffer, kCGImagePropertyExifDictionary, NULL);
+            NSData *jpeg = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer] ;
+            if (jpeg) {
+                // Do something with the attachments.
+                NSString *writePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Documents"];
+                NSURL *pathUrl = [[[NSFileManager defaultManager] URLForDirectory:writePath inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil] URLByAppendingPathComponent:@"test.jpeg"];
+                
+                NSLog(@"LENGTH: %i",jpeg.length);
+                NSLog(@"PATH: %@", writePath);
+                NSLog(@"URL: %@", pathUrl);
+                
+                [jpeg writeToURL:pathUrl atomically:YES];
+//                [[NSFileManager defaultManager] createFileAtPath:writePath contents:jpeg attributes:[[NSDictionary alloc] init]];
+                
+                BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:[writePath stringByAppendingPathComponent:@"test.jpeg"]];
+                NSLog(@"EXISTS: %hhd", fileExists);
+            }
+     }];
+
     
 }
 

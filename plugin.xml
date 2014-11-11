@@ -46,6 +46,7 @@
 		<header-file src="src/ios/ScanMatic.h"/>
 		<source-file src="src/ios/ScanMatic.m"/>
 		<framework src="AVFoundation.framework" />
+		<framework src="ImageIO.framework" />
 	</platform>
 	
 </plugin>
