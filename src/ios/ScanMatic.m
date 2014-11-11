@@ -298,21 +298,23 @@ NSString* version = @"0.0.1";
     
     [cameraOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler:
         ^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
-            CFDictionaryRef exifAttachments = CMGetAttachment(imageSampleBuffer, kCGImagePropertyExifDictionary, NULL);
+            // CFDictionaryRef exifAttachments = CMGetAttachment(imageSampleBuffer, kCGImagePropertyExifDictionary, NULL);
             NSData *jpeg = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer] ;
             if (jpeg) {
                 // Do something with the attachments.
-                NSString *writePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Documents"];
-                NSURL *pathUrl = [[[NSFileManager defaultManager] URLForDirectory:writePath inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil] URLByAppendingPathComponent:@"test.jpeg"];
+
+                // NSString *writePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Documents"];
+                // NSURL *pathUrl = [[[NSFileManager defaultManager] URLForDirectory:writePath inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil] URLByAppendingPathComponent:@"test.jpeg"];
+                NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES);
+                NSString *documentsDirectory = [paths objectAtIndex:0];
+                NSString *dataPath = [documentsDirectory stringByAppendingPathComponent:@"testing.jpeg"];
+
+                // [[NSFileManager defaultManager] createFileAtPath:writePath contents:jpeg attributes:[[NSDictionary alloc] init]];
+                [jpeg writeToFile:dataPath atomically:YES];
                 
+                BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:dataPath];
                 NSLog(@"LENGTH: %i",jpeg.length);
-                NSLog(@"PATH: %@", writePath);
-                NSLog(@"URL: %@", pathUrl);
-                
-                [jpeg writeToURL:pathUrl atomically:YES];
-//                [[NSFileManager defaultManager] createFileAtPath:writePath contents:jpeg attributes:[[NSDictionary alloc] init]];
-                
-                BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:[writePath stringByAppendingPathComponent:@"test.jpeg"]];
+                NSLog(@"PATH: %@", dataPath);
                 NSLog(@"EXISTS: %hhd", fileExists);
             }
      }];
