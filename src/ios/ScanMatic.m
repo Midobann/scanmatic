@@ -34,7 +34,7 @@ NSString* version = @"0.0.1";
     
     session = [[AVCaptureSession alloc] init];
 
-    session.sessionPreset = AVCaptureSessionPresetMedium;
+    session.sessionPreset = AVCaptureSessionPresetPhoto;
 
     AVCaptureVideoPreviewLayer *captureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:session];
 
@@ -301,21 +301,54 @@ NSString* version = @"0.0.1";
         ^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
             NSData *jpeg = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer] ;
             if (jpeg) {
+                
+                //create random image name
+                NSString *alphabet  = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXZY0123456789";
+                NSMutableString *s = [NSMutableString stringWithCapacity:10];
+                for (NSUInteger i = 0U; i < 10; i++) {
+                    u_int32_t r = arc4random() % [alphabet length];
+                    unichar c = [alphabet characterAtIndex:r];
+                    [s appendFormat:@"%C", c];
+                }
+                
+                //create image metadata
+                NSString *imageName = [s stringByAppendingString:@".jpeg"];
+                NSString *imageType = @"image/jpeg";
+                NSNumber *imageSize = [NSNumber numberWithLong:jpeg.length];
+                NSNumber *imageTime = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970]];
+                
+                //create storage path and store
                 NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES);
                 NSString *documentsDirectory = [paths objectAtIndex:0];
-                NSString *dataPath = [documentsDirectory stringByAppendingPathComponent:@"testing.jpeg"];
-
+                NSString *dataPath = [documentsDirectory stringByAppendingPathComponent:imageName];
                 [jpeg writeToFile:dataPath atomically:YES];
                 
+                //notify javascript
                 BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:dataPath];
-                NSLog(@"LENGTH: %i",jpeg.length);
-                NSLog(@"PATH: %@", dataPath);
-                NSLog(@"EXISTS: %hhd", fileExists);
                 [session removeOutput:cameraOutput];
+                if (fileExists)
+                {
+                    NSMutableDictionary* fileRecord = [NSMutableDictionary dictionary];
+                    [fileRecord setObject:imageName forKey:@"name"];
+                    [fileRecord setObject:imageSize forKey:@"size"];
+                    [fileRecord setObject:imageType forKey:@"type"];
+                    [fileRecord setObject:imageTime forKey:@"lastModified"];
+
+                    CDVPluginResult* pluginResult;
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:fileRecord];
+                    pluginResult.keepCallback = [NSNumber numberWithBool:YES];
+                    [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackCapture];
+                    
+                }
+                else
+                {
+                    CDVPluginResult* pluginResult;
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"failed to save image to file"];
+                    pluginResult.keepCallback = [NSNumber numberWithBool:YES];
+                    [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackCapture];
+                }
             }
      }];
-
-    
 }
 
 
