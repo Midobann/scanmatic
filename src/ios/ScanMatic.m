@@ -34,6 +34,8 @@ NSString* version = @"0.0.1";
     
     session = [[AVCaptureSession alloc] init];
 
+    NSLog(@"PIXELS_TARGET: %@", pixelsTarget);
+    NSLog(@"JPEG_COMPRESSION: %@", jpegCompression);
     session.sessionPreset = AVCaptureSessionPresetPhoto;
 
     AVCaptureVideoPreviewLayer *captureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:session];
@@ -133,6 +135,7 @@ NSString* version = @"0.0.1";
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
             
         } else {
+            session.sessionPreset = AVCaptureSessionPresetLow;
             
             [session addInput:cameraInput];
             [session startRunning];
@@ -310,7 +313,7 @@ NSString* version = @"0.0.1";
                     unichar c = [alphabet characterAtIndex:r];
                     [s appendFormat:@"%C", c];
                 }
-                
+               
                 //create image metadata
                 NSString *imageName = [s stringByAppendingString:@".jpeg"];
                 NSString *imageType = @"image/jpeg";
@@ -333,7 +336,7 @@ NSString* version = @"0.0.1";
                     [fileRecord setObject:imageSize forKey:@"size"];
                     [fileRecord setObject:imageType forKey:@"type"];
                     [fileRecord setObject:imageTime forKey:@"lastModified"];
-
+                    NSLog(@"DATA: %@", fileRecord);
                     CDVPluginResult* pluginResult;
                     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:fileRecord];
                     pluginResult.keepCallback = [NSNumber numberWithBool:YES];
