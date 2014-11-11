@@ -134,9 +134,7 @@ NSString* version = @"0.0.1";
             
         } else {
             
-            cameraOutput = [[AVCaptureStillImageOutput alloc] init];
             [session addInput:cameraInput];
-            [session addOutput:cameraOutput];
             [session startRunning];
 
             
@@ -282,6 +280,9 @@ NSString* version = @"0.0.1";
 
 - (void)capture:(CDVInvokedUrlCommand*)command {
     
+    cameraOutput = [[AVCaptureStillImageOutput alloc] init];
+    [session addOutput:cameraOutput];
+    
     NSDictionary *outputSettings = @{ AVVideoCodecKey : AVVideoCodecJPEG};
     [cameraOutput setOutputSettings:outputSettings];
     
@@ -298,24 +299,19 @@ NSString* version = @"0.0.1";
     
     [cameraOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler:
         ^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
-            // CFDictionaryRef exifAttachments = CMGetAttachment(imageSampleBuffer, kCGImagePropertyExifDictionary, NULL);
             NSData *jpeg = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer] ;
             if (jpeg) {
-                // Do something with the attachments.
-
-                // NSString *writePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Documents"];
-                // NSURL *pathUrl = [[[NSFileManager defaultManager] URLForDirectory:writePath inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil] URLByAppendingPathComponent:@"test.jpeg"];
                 NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES);
                 NSString *documentsDirectory = [paths objectAtIndex:0];
                 NSString *dataPath = [documentsDirectory stringByAppendingPathComponent:@"testing.jpeg"];
 
-                // [[NSFileManager defaultManager] createFileAtPath:writePath contents:jpeg attributes:[[NSDictionary alloc] init]];
                 [jpeg writeToFile:dataPath atomically:YES];
                 
                 BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:dataPath];
                 NSLog(@"LENGTH: %i",jpeg.length);
                 NSLog(@"PATH: %@", dataPath);
                 NSLog(@"EXISTS: %hhd", fileExists);
+                [session removeOutput:cameraOutput];
             }
      }];
 
