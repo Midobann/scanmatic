@@ -328,51 +328,51 @@ NSString* version = @"0.0.1";
             
             //save overlay and send path to javascript
             NSString *alphabet  = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXZY0123456789";
-            NSMutableString *o = [NSMutableString stringWithCapacity:10];
-            for (NSUInteger i = 0U; i < 10; i++) {
-                u_int32_t r = arc4random() % [alphabet length];
-                unichar c = [alphabet characterAtIndex:r];
-                [o appendFormat:@"%C", c];
-            }
-            NSString *overlayName = [o stringByAppendingString:@".jpeg"];
-            NSString *overlayType = @"image/jpeg";
-            NSNumber *overlaySize = [NSNumber numberWithLong:overlayJpeg.length];
-            NSNumber *overlayTime = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970]];
+            // NSMutableString *o = [NSMutableString stringWithCapacity:10];
+            // for (NSUInteger i = 0U; i < 10; i++) {
+            //     u_int32_t r = arc4random() % [alphabet length];
+            //     unichar c = [alphabet characterAtIndex:r];
+            //     [o appendFormat:@"%C", c];
+            // }
+            // NSString *overlayName = [o stringByAppendingString:@".jpeg"];
+            // NSString *overlayType = @"image/jpeg";
+            // NSNumber *overlaySize = [NSNumber numberWithLong:overlayJpeg.length];
+            // NSNumber *overlayTime = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970]];
             
-            NSArray *opaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES);
-            NSString *odocumentsDirectory = [opaths objectAtIndex:0];
-            NSString *odataPath = [odocumentsDirectory stringByAppendingPathComponent:overlayName];
-            [overlayJpeg writeToFile:odataPath atomically:YES];
+            // NSArray *opaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES);
+            // NSString *odocumentsDirectory = [opaths objectAtIndex:0];
+            // NSString *odataPath = [odocumentsDirectory stringByAppendingPathComponent:overlayName];
+            // [overlayJpeg writeToFile:odataPath atomically:YES];
             
-            //notify javascript
-            BOOL ofileExists = [[NSFileManager defaultManager] fileExistsAtPath:odataPath];
-            if (ofileExists)
-            {
-                NSMutableDictionary* ofileRecord = [NSMutableDictionary dictionary];
-                [ofileRecord setObject:overlayName forKey:@"name"];
-                [ofileRecord setObject:overlaySize forKey:@"size"];
-                [ofileRecord setObject:overlayType forKey:@"type"];
-                [ofileRecord setObject:overlayTime forKey:@"lastModified"];
-                NSLog(@"OVERLAY DATA: %@", ofileRecord);
-                CDVPluginResult* pluginResult;
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:ofileRecord];
-                pluginResult.keepCallback = [NSNumber numberWithBool:YES];
-                [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackPreview];
+            // //notify javascript
+            // BOOL ofileExists = [[NSFileManager defaultManager] fileExistsAtPath:odataPath];
+            // if (ofileExists)
+            // {
+            //     NSMutableDictionary* ofileRecord = [NSMutableDictionary dictionary];
+            //     [ofileRecord setObject:overlayName forKey:@"name"];
+            //     [ofileRecord setObject:overlaySize forKey:@"size"];
+            //     [ofileRecord setObject:overlayType forKey:@"type"];
+            //     [ofileRecord setObject:overlayTime forKey:@"lastModified"];
+            //     NSLog(@"OVERLAY DATA: %@", ofileRecord);
+            //     CDVPluginResult* pluginResult;
+            //     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:ofileRecord];
+            //     pluginResult.keepCallback = [NSNumber numberWithBool:YES];
+            //     [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackPreview];
                 
-            }
-            else
-            {
-                CDVPluginResult* pluginResult;
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"failed to save overlay image to file"];
-                pluginResult.keepCallback = [NSNumber numberWithBool:YES];
-                [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackPreview];
-            }
+            // }
+            // else
+            // {
+            //     CDVPluginResult* pluginResult;
+            //     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"failed to save overlay image to file"];
+            //     pluginResult.keepCallback = [NSNumber numberWithBool:YES];
+            //     [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackPreview];
+            // }
             
             //send overlay to javascript
-            //CDVPluginResult* pluginResult;
-            //pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:overlayJpeg];
-            //pluginResult.keepCallback = [NSNumber numberWithBool:YES];
-            //[self.commandDelegate sendPluginResult:pluginResult callbackId:callbackPreview];
+            CDVPluginResult* pluginResult;
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:overlayJpeg];
+            pluginResult.keepCallback = [NSNumber numberWithBool:YES];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackPreview];
             
             //compress image
             float compressionFactor = ((float)[jpegCompression intValue]) / 100.0;
