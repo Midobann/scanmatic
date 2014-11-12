@@ -217,6 +217,7 @@ NSString* version = @"0.0.1";
 
     CDVPluginResult* pluginResult;
     NSString *flashState = [command.arguments objectAtIndex:0];
+    localFlashState = flashState;
     [cameraHandle lockForConfiguration:nil];
     
     if ([flashState  isEqual: @"torch"])
@@ -294,6 +295,7 @@ NSString* version = @"0.0.1";
     [session addOutput:cameraOutput];
     [session commitConfiguration];
     
+    
     NSDictionary *outputSettings = @{ AVVideoCodecKey : AVVideoCodecJPEG};
     [cameraOutput setOutputSettings:outputSettings];
     
@@ -315,6 +317,14 @@ NSString* version = @"0.0.1";
             [session removeOutput:cameraOutput];
             [session commitConfiguration];
 
+            [cameraHandle lockForConfiguration:nil];
+            if ([localFlashState  isEqual: @"torch"])
+            {
+                [cameraHandle setTorchMode:AVCaptureTorchModeOn];
+                [cameraHandle setFlashMode:AVCaptureFlashModeOn];
+            }
+            [cameraHandle unlockForConfiguration];
+            
             //get image
             NSData *largeJpeg = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer] ;
             UIImage *image = [UIImage imageWithData:largeJpeg];
