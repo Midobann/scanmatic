@@ -316,7 +316,8 @@ NSString* version = @"0.0.1";
             UIImage *image = [UIImage imageWithData:largeJpeg];
             
             //create overlay
-            UIImage *resizedImage = [self imageWithImage:image scaledToSize:CGSizeMake(image.size.width/2, image.size.height/2)];
+            float shrink = (float)image.size.width / 320.0;
+            UIImage *resizedImage = [self imageWithImage:image scaledToSize:CGSizeMake(320, image.size.height/shrink)];
             NSData *overlayJpeg = UIImageJPEGRepresentation(resizedImage, 0.25);
             NSLog(@"OVERLAYSIZE: %i", overlayJpeg.length);
             
