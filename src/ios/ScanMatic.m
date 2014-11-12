@@ -137,8 +137,9 @@ NSString* version = @"0.0.1";
             [session beginConfiguration];
             [self setCaptureSize];
             [session addInput:cameraInput];
-            [session startRunning];
             [session commitConfiguration];
+            [session startRunning];
+            
             
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -156,9 +157,8 @@ NSString* version = @"0.0.1";
             
             [session beginConfiguration];
             [session removeInput:cameraInput];
-            [session stopRunning];
             [session commitConfiguration];
-
+            [session stopRunning];
             
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -310,8 +310,13 @@ NSString* version = @"0.0.1";
             [session beginConfiguration];
             [session removeOutput:cameraOutput];
             [session commitConfiguration];
+
+            //compress image
+            float compressionFactor = ((float)[jpegCompression intValue]) / 100.0;
+            NSData *largeJpeg = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer] ;
+            UIImage *image = [UIImage imageWithData: largeJpeg];
+            NSData *jpeg = UIImageJPEGRepresentation(image, compressionFactor);
             
-            NSData *jpeg = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer] ;
             if (jpeg) {
                 
                 //create random image name
@@ -360,6 +365,7 @@ NSString* version = @"0.0.1";
                 }
             }
      }];
+    
 }
 
 - (void)setCaptureSize {
