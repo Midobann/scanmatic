@@ -311,14 +311,27 @@ NSString* version = @"0.0.1";
             [session removeOutput:cameraOutput];
             [session commitConfiguration];
 
+            //get image
+            NSData *largeJpeg = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer] ;
+            UIImage *image = [UIImage imageWithData:largeJpeg];
+            
+            //create overlay
+            UIImage *resizedImage = [self imageWithImage:image scaledToSize:CGSizeMake(image.size.width/2, image.size.height/2)];
+            NSData *overlayJpeg = UIImageJPEGRepresentation(resizedImage, 0.25);
+            NSLog(@"OVERLAYSIZE: %i", overlayJpeg.length);
+            
+            //send overlay to javascript
+            CDVPluginResult* pluginResult;
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:overlayJpeg];
+            pluginResult.keepCallback = [NSNumber numberWithBool:YES];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackPreview];
+            
             //compress image
             float compressionFactor = ((float)[jpegCompression intValue]) / 100.0;
-            NSData *largeJpeg = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer] ;
-            UIImage *image = [UIImage imageWithData: largeJpeg];
             NSData *jpeg = UIImageJPEGRepresentation(image, compressionFactor);
             
             if (jpeg) {
-                
+            
                 //create random image name
                 NSString *alphabet  = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXZY0123456789";
                 NSMutableString *s = [NSMutableString stringWithCapacity:10];
@@ -367,6 +380,18 @@ NSString* version = @"0.0.1";
      }];
     
 }
+
+- (UIImage*)imageWithImage:(UIImage*)image
+              scaledToSize:(CGSize)newSize
+{
+    UIGraphicsBeginImageContext( newSize );
+    [image drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+    UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return newImage;
+}
+
 
 - (void)setCaptureSize {
     
