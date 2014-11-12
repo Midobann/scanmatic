@@ -24,10 +24,12 @@ NSString* version = @"0.0.1";
 
     
     CGRect viewBounds = self.viewController.view.bounds;
+    viewBounds.size.height += 20;
 
     viewBounds.origin = self.viewController.view.bounds.origin;
     
     cameraPreview = [[UIView alloc] initWithFrame:viewBounds];
+    cameraPreview.backgroundColor = [UIColor colorWithWhite:0.0f alpha:1.0f];
     cameraPreview.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     
     [self.viewController.view insertSubview:self.cameraPreview belowSubview:self.webView];
@@ -37,6 +39,8 @@ NSString* version = @"0.0.1";
     session.sessionPreset = AVCaptureSessionPresetMedium;
 
     AVCaptureVideoPreviewLayer *captureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:session];
+    
+    captureVideoPreviewLayer.videoGravity = AVLayerVideoGravityResize;
 
     captureVideoPreviewLayer.frame = self.cameraPreview.bounds;
     [self.cameraPreview.layer addSublayer:captureVideoPreviewLayer];
