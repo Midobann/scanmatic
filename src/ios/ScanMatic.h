@@ -25,7 +25,7 @@
     
     NSNumber *jpegCompression;
     NSNumber *pixelsTarget;
-
+    NSString *localFlashState;
 }
 
 @property(nonatomic, retain) IBOutlet UIView *cameraPreview;
