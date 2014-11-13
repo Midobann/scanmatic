@@ -181,9 +181,7 @@ NSString* version = @"0.0.1";
 
     CDVPluginResult* pluginResult;
     NSString *soundName = [command.arguments objectAtIndex:0];
-    
     //play sound
-    AVAudioPlayer *audioPlayer;
     NSString *audioPath = [[NSBundle mainBundle] pathForResource:soundName ofType:@"mp3"];
     NSURL *audioURL = [NSURL fileURLWithPath:audioPath];
     audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:audioURL error:nil];
