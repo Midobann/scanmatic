@@ -62,6 +62,7 @@ NSString* version = @"0.0.1";
     //default values for compression
     jpegCompression = [NSNumber numberWithInt:60];
     pixelsTarget = [NSNumber numberWithInt:1200000];
+    localFlashState = @"off";
     
 }
 
