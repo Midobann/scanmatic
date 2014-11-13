@@ -109,11 +109,11 @@ public class ScanMatic extends CordovaPlugin {
 			public void run() {
 				try {
 					//play sound
-					if (soundName == "shutter") {soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);}
-					else if (soundName == "coin") {soundPool.play(soundPoolMap.get(coin), 1, 1, 1, 0, 1f);}
-					else if (soundName == "cashregister") {soundPool.play(soundPoolMap.get(cashregister), 1, 1, 1, 0, 1f);}
-					else if (soundName == "alarm") {soundPool.play(soundPoolMap.get(alarm), 1, 1, 1, 0, 1f);}
-					else if (soundName == "ding") {soundPool.play(soundPoolMap.get(ding), 1, 1, 1, 0, 1f);}
+					if (soundName.equals("shutter")) {soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);}
+					else if (soundName.equals("coin")) {soundPool.play(soundPoolMap.get(coin), 1, 1, 1, 0, 1f);}
+					else if (soundName.equals("cashregister")) {soundPool.play(soundPoolMap.get(cashregister), 1, 1, 1, 0, 1f);}
+					else if (soundName.equals("alarm")) {soundPool.play(soundPoolMap.get(alarm), 1, 1, 1, 0, 1f);}
+					else if (soundName.equals("ding")) {soundPool.play(soundPoolMap.get(ding), 1, 1, 1, 0, 1f);}
 					else {callbackContext.error("sound not found");}
 					callbackContext.success();
 				} catch (Exception e) {
