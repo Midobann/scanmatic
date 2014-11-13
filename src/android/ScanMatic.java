@@ -63,10 +63,10 @@ public class ScanMatic extends CordovaPlugin {
 		soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 100);
 		soundPoolMap = new HashMap<Integer, Integer>(1);
 		
-		// soundPoolMap.put(shutter, soundPool.load(activity, shutter, 1));
+		soundPoolMap.put(shutter, soundPool.load(activity, shutter, 1));
 		// soundPoolMap.put(coin, soundPool.load(activity, coin, 1));
 		// soundPoolMap.put(cashregister, soundPool.load(activity, cashregister, 1));
-		soundPoolMap.put(alarm, soundPool.load(activity, alarm, 1));
+		// soundPoolMap.put(alarm, soundPool.load(activity, alarm, 1));
 		// soundPoolMap.put(ding, soundPool.load(activity, ding, 1));
 
 		Log.d(tag, "Initialized");
@@ -110,7 +110,7 @@ public class ScanMatic extends CordovaPlugin {
 				try {
 					//play sound
 
-					soundPool.play(soundPoolMap.get(alarm), 1, 1, 1, 0, 1f);
+					soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);
 
 					// if (soundName.equals("shutter")) {soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);}
 					// else if (soundName.equals("coin")) {soundPool.play(soundPoolMap.get(coin), 1, 1, 1, 0, 1f);}
