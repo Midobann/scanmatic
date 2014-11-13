@@ -105,12 +105,12 @@ public class ScanMatic extends CordovaPlugin {
 	}
 
 	public boolean sound(final String soundName, final CallbackContext callbackContext) {
-		// cordova.getThreadPool().execute(new Runnable() {
-		// 	public void run() {
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
 				try {
 					//play sound
-
-					soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);
+					playShutterSound();
+					// soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);
 
 					// if (soundName.equals("shutter")) {soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);}
 					// else if (soundName.equals("coin")) {soundPool.play(soundPoolMap.get(coin), 1, 1, 1, 0, 1f);}
@@ -122,8 +122,8 @@ public class ScanMatic extends CordovaPlugin {
 				} catch (Exception e) {
 					callbackContext.error(e.getLocalizedMessage());
 				}
-		// 	}
-		// });
+			}
+		});
 		return true;
 	}
 
