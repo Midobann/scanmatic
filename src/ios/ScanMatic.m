@@ -176,6 +176,17 @@ NSString* version = @"0.0.1";
     }
 }
 
+- (void)sound:(CDVInvokedUrlCommand*)command {
+
+    CDVPluginResult* pluginResult;
+    NSString *soundName = [command.arguments objectAtIndex:0];
+    
+    //play sound
+    
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 
 - (void)flash:(CDVInvokedUrlCommand*)command {
 

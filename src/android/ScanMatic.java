@@ -96,6 +96,8 @@ public class ScanMatic extends CordovaPlugin {
 		}
 	}
 
+
+
 	
 	public boolean startCamera(final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
@@ -131,6 +133,21 @@ public class ScanMatic extends CordovaPlugin {
 			public void run() {
 				try {
 					smViewer.smCamera.setFlash(state);
+					callbackContext.success();
+				} catch (Exception e) {
+					callbackContext.error(e.getLocalizedMessage());
+				}
+			}
+		});
+		return true;
+	}
+
+	public boolean sound(final String state, final CallbackContext callbackContext) {
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
+				try {
+					//play the sound
+					
 					callbackContext.success();
 				} catch (Exception e) {
 					callbackContext.error(e.getLocalizedMessage());
