@@ -109,9 +109,9 @@ public class ScanMatic extends CordovaPlugin {
 			else if (soundName.equals("ding")) 
 				{soundPool.play(soundPoolMap.get(ding), 1, 1, 1, 0, 1f);}
 			else 
-				{throw new Exception("PlaySound: sound name not found");}
+				{Log.e ("PlaySound", "sound name not found");}
 		} catch (Exception e) {
-			throw new Exception("PlaySound: sound unable to play");
+			Log.e ("PlaySound", "sound unable to play");
 		}
 	}
 
