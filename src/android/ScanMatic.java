@@ -105,8 +105,8 @@ public class ScanMatic extends CordovaPlugin {
 	}
 
 	public boolean sound(final String soundName, final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
+		// cordova.getThreadPool().execute(new Runnable() {
+		// 	public void run() {
 				try {
 					//play sound
 
@@ -122,8 +122,8 @@ public class ScanMatic extends CordovaPlugin {
 				} catch (Exception e) {
 					callbackContext.error(e.getLocalizedMessage());
 				}
-			}
-		});
+		// 	}
+		// });
 		return true;
 	}
 
