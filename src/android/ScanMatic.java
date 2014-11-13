@@ -64,10 +64,10 @@ public class ScanMatic extends CordovaPlugin {
 		soundPoolMap = new HashMap<Integer, Integer>(1);
 		
 		soundPoolMap.put(shutter, soundPool.load(activity, shutter, 1));
-		// soundPoolMap.put(coin, soundPool.load(activity, coin, 1));
-		// soundPoolMap.put(cashregister, soundPool.load(activity, cashregister, 1));
-		// soundPoolMap.put(alarm, soundPool.load(activity, alarm, 1));
-		// soundPoolMap.put(ding, soundPool.load(activity, ding, 1));
+		soundPoolMap.put(coin, soundPool.load(activity, coin, 1));
+		soundPoolMap.put(cashregister, soundPool.load(activity, cashregister, 1));
+		soundPoolMap.put(alarm, soundPool.load(activity, alarm, 1));
+		soundPoolMap.put(ding, soundPool.load(activity, ding, 1));
 
 		Log.d(tag, "Initialized");
 	}
@@ -109,15 +109,12 @@ public class ScanMatic extends CordovaPlugin {
 			public void run() {
 				try {
 					//play sound
-					playShutterSound();
-					// soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);
-
-					// if (soundName.equals("shutter")) {soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);}
-					// else if (soundName.equals("coin")) {soundPool.play(soundPoolMap.get(coin), 1, 1, 1, 0, 1f);}
-					// else if (soundName.equals("cashregister")) {soundPool.play(soundPoolMap.get(cashregister), 1, 1, 1, 0, 1f);}
-					// else if (soundName.equals("alarm")) {soundPool.play(soundPoolMap.get(alarm), 1, 1, 1, 0, 1f);}
-					// else if (soundName.equals("ding")) {soundPool.play(soundPoolMap.get(ding), 1, 1, 1, 0, 1f);}
-					// else {callbackContext.error("sound not found");}
+					if (soundName.equals("shutter")) {soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);}
+					else if (soundName.equals("coin")) {soundPool.play(soundPoolMap.get(coin), 1, 1, 1, 0, 1f);}
+					else if (soundName.equals("cashregister")) {soundPool.play(soundPoolMap.get(cashregister), 1, 1, 1, 0, 1f);}
+					else if (soundName.equals("alarm")) {soundPool.play(soundPoolMap.get(alarm), 1, 1, 1, 0, 1f);}
+					else if (soundName.equals("ding")) {soundPool.play(soundPoolMap.get(ding), 1, 1, 1, 0, 1f);}
+					else {callbackContext.error("sound not found");}
 					callbackContext.success();
 				} catch (Exception e) {
 					callbackContext.error(e.getLocalizedMessage());
@@ -263,6 +260,8 @@ public class ScanMatic extends CordovaPlugin {
         	return flash(args.getString(0), callbackContext);
         } else if (action.equals("setImageSpecs")) {
         	return setImageSpecs(args.getString(0), args.getString(1), callbackContext);
+        } else if (action.equals("sound")) {
+        	return sound(args.getString(0), callbackContext);
         } else if (action.equals("finish")) {
         	cordova.getActivity().finish();
         	return true;
