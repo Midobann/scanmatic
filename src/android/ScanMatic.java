@@ -157,7 +157,8 @@ public class ScanMatic extends CordovaPlugin {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				try {
-					smViewer.smCamera.setFlash(state);
+					if (smViewer && smViewer.smCamera)
+						{smViewer.smCamera.setFlash(state);}
 					callbackContext.success();
 				} catch (Exception e) {
 					callbackContext.error(e.getLocalizedMessage());
