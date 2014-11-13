@@ -52,11 +52,11 @@
 		<framework src="AVFoundation.framework" />
 		<framework src="ImageIO.framework" />
 
-		<asset src="shutter.mp3" target="shutter.mp3" />
-    	<asset src="coin.mp3" target="coin.mp3" />
-    	<asset src="cashregister.mp3" target="cashregister.mp3" />
-    	<asset src="ding.mp3" target="ding.mp3" />
-    	<asset src="alarm.mp3" target="alarm.mp3" />
+		<resource-file src="shutter.mp3" target="Resources/shutter.mp3" />
+    	<resource-file src="coin.mp3" target="Resources/coin.mp3" />
+    	<resource-file src="cashregister.mp3" target="Resources/cashregister.mp3" />
+    	<resource-file src="ding.mp3" target="Resources/ding.mp3" />
+    	<resource-file src="alarm.mp3" target="Resources/alarm.mp3" />
 
 	</platform>
 	
