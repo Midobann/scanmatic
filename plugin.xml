@@ -32,6 +32,10 @@
     	<source-file src="src/android/Thread_FramePrep.java" target-dir="src/com/spendmatic/scanmatic" />
 
     	<resource-file src="shutter.mp3" target="res/raw/shutter.mp3" />
+    	<resource-file src="coin.mp3" target="res/raw/coin.mp3" />
+    	<resource-file src="cashregister.mp3" target="res/raw/cashregister.mp3" />
+    	<resource-file src="ding.mp3" target="res/raw/ding.mp3" />
+    	<resource-file src="alarm.mp3" target="res/raw/alarm.mp3" />
 			
 	</platform>
 

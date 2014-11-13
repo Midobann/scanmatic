@@ -35,7 +35,11 @@ public class ScanMatic extends CordovaPlugin {
 	public static final String version = "0.0.1";
 
 	public static final int shutter = R.raw.shutter;
-	
+	public static final int coin = R.raw.coin;
+	public static final int cashregister = R.raw.cashregister;
+	public static final int alarm = R.raw.alarm;
+	public static final int ding = R.raw.ding;
+
 	public SoundPool soundPool;
 	public HashMap<Integer, Integer> soundPoolMap; 
 
@@ -60,6 +64,10 @@ public class ScanMatic extends CordovaPlugin {
 		soundPoolMap = new HashMap<Integer, Integer>(1);
 		
 		soundPoolMap.put(shutter, soundPool.load(activity, shutter, 1));
+		soundPoolMap.put(coin, soundPool.load(activity, coin, 1));
+		soundPoolMap.put(cashregister, soundPool.load(activity, cashregister, 1));
+		soundPoolMap.put(alarm, soundPool.load(activity, alarm, 1));
+		soundPoolMap.put(ding, soundPool.load(activity, ding, 1));
 
 		Log.d(tag, "Initialized");
 	}
@@ -96,9 +104,26 @@ public class ScanMatic extends CordovaPlugin {
 		}
 	}
 
+	public boolean sound(final String soundName, final CallbackContext callbackContext) {
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
+				try {
+					//play sound
+					if (soundName == "shutter") {soundPool.play(soundPoolMap.get(shutter), 1, 1, 1, 0, 1f);}
+					else if (soundName == "coin") {soundPool.play(soundPoolMap.get(coin), 1, 1, 1, 0, 1f);}
+					else if (soundName == "cashregister") {soundPool.play(soundPoolMap.get(cashregister), 1, 1, 1, 0, 1f);}
+					else if (soundName == "alarm") {soundPool.play(soundPoolMap.get(alarm), 1, 1, 1, 0, 1f);}
+					else if (soundName == "ding") {soundPool.play(soundPoolMap.get(ding), 1, 1, 1, 0, 1f);}
+					else {callbackContext.error("sound not found");}
+					callbackContext.success();
+				} catch (Exception e) {
+					callbackContext.error(e.getLocalizedMessage());
+				}
+			}
+		});
+		return true;
+	}
 
-
-	
 	public boolean startCamera(final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
@@ -133,21 +158,6 @@ public class ScanMatic extends CordovaPlugin {
 			public void run() {
 				try {
 					smViewer.smCamera.setFlash(state);
-					callbackContext.success();
-				} catch (Exception e) {
-					callbackContext.error(e.getLocalizedMessage());
-				}
-			}
-		});
-		return true;
-	}
-
-	public boolean sound(final String state, final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
-				try {
-					//play sound
-
 					callbackContext.success();
 				} catch (Exception e) {
 					callbackContext.error(e.getLocalizedMessage());
