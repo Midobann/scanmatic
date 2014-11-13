@@ -44,126 +44,98 @@ NSString* version = @"0.0.1";
 
     captureVideoPreviewLayer.frame = self.cameraPreview.bounds;
     [self.cameraPreview.layer addSublayer:captureVideoPreviewLayer];
+    
+    //get camera handle
+    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    for (AVCaptureDevice *device in devices) {
+        if ([device hasMediaType:AVMediaTypeVideo]) {
+            if ([device position] == AVCaptureDevicePositionBack) {
+                cameraHandle = device;
+            }
+        }
+    }
+    
+    //get camera input
+    NSError *error = nil;
+    cameraInput = [AVCaptureDeviceInput deviceInputWithDevice:cameraHandle error:&error];
+    
+    //default values for compression
+    jpegCompression = [NSNumber numberWithInt:60];
+    pixelsTarget = [NSNumber numberWithInt:1200000];
+    
 }
 
 
 - (void)info:(CDVInvokedUrlCommand*)command {
     
-    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-    
     NSMutableDictionary* info = [NSMutableDictionary dictionary];
     NSMutableDictionary* camera = [NSMutableDictionary dictionary];
     NSMutableArray* flashModes = [NSMutableArray array];
     
-    [flashModes addObject:@"off"];
-    
     [info setObject:version forKey:@"version"];
-    
-    for (AVCaptureDevice *device in devices) {
-        
-        if ([device hasMediaType:AVMediaTypeVideo]) {
-            
-            if ([device position] == AVCaptureDevicePositionBack) {
-                
-                [camera setObject:[device localizedName] forKey:@"name"];
-                
-                cameraHandle = device;
-                
-                if (device.hasFlash && device.flashAvailable) {
-                    if ([device isFlashModeSupported:AVCaptureFlashModeOn]) {
-                        [flashModes addObject:@"on"];
-                    }
+    [camera setObject:[cameraHandle localizedName] forKey:@"name"];
+    [flashModes addObject:@"off"];
+    if (cameraHandle.hasFlash && cameraHandle.flashAvailable) {
+        if ([cameraHandle isFlashModeSupported:AVCaptureFlashModeOn]) {
+            [flashModes addObject:@"on"];
+        }
                     
-                    if ([device isFlashModeSupported:AVCaptureFlashModeAuto]) {
-                        [flashModes addObject:@"auto"];
-                    }
-                }
-                
-                if (device.hasTorch && device.torchAvailable) {
-                    [flashModes addObject:@"torch"];
-                }
-                
-                [camera setObject:flashModes forKey:@"flashModes"];
-                [info setObject:camera forKey:@"camera"];
-            }
+        if ([cameraHandle isFlashModeSupported:AVCaptureFlashModeAuto]) {
+            [flashModes addObject:@"auto"];
         }
     }
+    if (cameraHandle.hasTorch && cameraHandle.torchAvailable) {
+        [flashModes addObject:@"torch"];
+    }
+    [camera setObject:flashModes forKey:@"flashModes"];
+    [info setObject:camera forKey:@"camera"];
     
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:info];
-    
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)camera:(CDVInvokedUrlCommand*)command {
     
+    CDVPluginResult* pluginResult;
+    
     self.webView.opaque = NO;
     self.webView.backgroundColor = [UIColor clearColor];
     
-    
     NSNumber *enable = [command.arguments objectAtIndex:0];
-    
     if(![enable isKindOfClass:[NSNumber class]]) {
         enable = [NSNumber numberWithBool:NO];
     }
-    
-    CDVPluginResult* pluginResult;
-    
     if ([enable boolValue]) {
         
-        NSError *error = nil;
-        
-        if (!cameraHandle)
-        {
-            NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-            for (AVCaptureDevice *device in devices) {
-                if ([device hasMediaType:AVMediaTypeVideo]) {
-                    if ([device position] == AVCaptureDevicePositionBack) {
-                        cameraHandle = device;
-                    }
-                }
-            }
-        }
-        
-        if (!cameraInput) {
-            // AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-            cameraInput = [AVCaptureDeviceInput deviceInputWithDevice:cameraHandle error:&error];
-        }
-        
-        if (!cameraInput) {
-            // Handle the error appropriately.
-            NSLog(@"ERROR: trying to open camera: %@", error);
-            
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
+        if (!cameraInput || !cameraHandle) {
+            NSString *error = @"ERROR: camera did not open correctly";
+            NSLog(@"%@", error);
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
             
         } else {
-            
+        
             [session beginConfiguration];
             [self setCaptureSize];
             [session addInput:cameraInput];
             [session commitConfiguration];
             [session startRunning];
             
-            
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-            
         }
-            
+        
     } else {
         
         if (!cameraInput) {
-
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"camera was never started"];
+            NSString *error = @"camera was never started";
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        
         } else {
-            
             [session beginConfiguration];
             [session removeInput:cameraInput];
             [session commitConfiguration];
             [session stopRunning];
-            
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         }
@@ -177,22 +149,16 @@ NSString* version = @"0.0.1";
     [cameraHandle addObserver:self forKeyPath:@"adjustingFocus" options:flags context:nil];
     
     [cameraHandle lockForConfiguration:nil];
-    
     if ([cameraHandle isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
         [cameraHandle setFocusMode:AVCaptureFocusModeAutoFocus];
     }
-    
     [cameraHandle unlockForConfiguration];
-    
-    
 
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if( [keyPath isEqualToString:@"adjustingFocus"] ){
         BOOL adjustingFocus = [ [change objectForKey:NSKeyValueChangeNewKey] isEqualToNumber:[NSNumber numberWithInt:1] ];
-        NSLog(@"Is adjusting focus? %@", adjustingFocus ? @"YES" : @"NO" );
-       
         if (adjustingFocus)
         {
             CDVPluginResult* pluginResult;
@@ -211,15 +177,12 @@ NSString* version = @"0.0.1";
 }
 
 
-
-
 - (void)flash:(CDVInvokedUrlCommand*)command {
 
     CDVPluginResult* pluginResult;
     NSString *flashState = [command.arguments objectAtIndex:0];
     localFlashState = flashState;
     [cameraHandle lockForConfiguration:nil];
-    
     if ([flashState  isEqual: @"torch"])
     {
         [cameraHandle setTorchMode:AVCaptureTorchModeOn];
@@ -335,49 +298,6 @@ NSString* version = @"0.0.1";
             NSData *overlayJpeg = UIImageJPEGRepresentation(resizedImage, 0.25);
             NSLog(@"OVERLAYSIZE: %lu", (unsigned long)overlayJpeg.length);
             
-            
-            //save overlay and send path to javascript
-            NSString *alphabet  = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXZY0123456789";
-            // NSMutableString *o = [NSMutableString stringWithCapacity:10];
-            // for (NSUInteger i = 0U; i < 10; i++) {
-            //     u_int32_t r = arc4random() % [alphabet length];
-            //     unichar c = [alphabet characterAtIndex:r];
-            //     [o appendFormat:@"%C", c];
-            // }
-            // NSString *overlayName = [o stringByAppendingString:@".jpeg"];
-            // NSString *overlayType = @"image/jpeg";
-            // NSNumber *overlaySize = [NSNumber numberWithLong:overlayJpeg.length];
-            // NSNumber *overlayTime = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970]];
-            
-            // NSArray *opaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES);
-            // NSString *odocumentsDirectory = [opaths objectAtIndex:0];
-            // NSString *odataPath = [odocumentsDirectory stringByAppendingPathComponent:overlayName];
-            // [overlayJpeg writeToFile:odataPath atomically:YES];
-            
-            // //notify javascript
-            // BOOL ofileExists = [[NSFileManager defaultManager] fileExistsAtPath:odataPath];
-            // if (ofileExists)
-            // {
-            //     NSMutableDictionary* ofileRecord = [NSMutableDictionary dictionary];
-            //     [ofileRecord setObject:overlayName forKey:@"name"];
-            //     [ofileRecord setObject:overlaySize forKey:@"size"];
-            //     [ofileRecord setObject:overlayType forKey:@"type"];
-            //     [ofileRecord setObject:overlayTime forKey:@"lastModified"];
-            //     NSLog(@"OVERLAY DATA: %@", ofileRecord);
-            //     CDVPluginResult* pluginResult;
-            //     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:ofileRecord];
-            //     pluginResult.keepCallback = [NSNumber numberWithBool:YES];
-            //     [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackPreview];
-                
-            // }
-            // else
-            // {
-            //     CDVPluginResult* pluginResult;
-            //     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"failed to save overlay image to file"];
-            //     pluginResult.keepCallback = [NSNumber numberWithBool:YES];
-            //     [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackPreview];
-            // }
-            
             //send overlay to javascript
             CDVPluginResult* pluginResult;
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:overlayJpeg];
@@ -391,6 +311,7 @@ NSString* version = @"0.0.1";
             if (jpeg) {
             
                 //create random image name
+                NSString *alphabet  = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXZY0123456789";
                 NSMutableString *s = [NSMutableString stringWithCapacity:10];
                 for (NSUInteger i = 0U; i < 10; i++) {
                     u_int32_t r = arc4random() % [alphabet length];
