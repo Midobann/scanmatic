@@ -45,6 +45,7 @@
 		        <param name="ios-package" value="ScanMatic" />
 		        <param name="onload" value="true" />
 		    </feature>
+		    <preference name="iosPersistentFileLocation" value="Library" />
 		</config-file>
 
 		<header-file src="src/ios/ScanMatic.h"/>
