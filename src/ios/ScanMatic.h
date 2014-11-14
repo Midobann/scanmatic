@@ -17,6 +17,7 @@
     AVCaptureDevice *cameraHandle;
     AVCaptureDeviceInput *cameraInput;
     AVCaptureStillImageOutput *cameraOutput;
+    AVCaptureConnection *videoConnection;
     AVAudioPlayer *audioPlayer;
     
     NSString *callbackAutoFocus;

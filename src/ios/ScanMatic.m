@@ -59,6 +59,11 @@ NSString* version = @"0.0.1";
     NSError *error = nil;
     cameraInput = [AVCaptureDeviceInput deviceInputWithDevice:cameraHandle error:&error];
     
+    //get camera output
+    cameraOutput = [[AVCaptureStillImageOutput alloc] init];
+    NSDictionary *outputSettings = @{ AVVideoCodecKey : AVVideoCodecJPEG};
+    [cameraOutput setOutputSettings:outputSettings];
+    
     //default values for compression
     jpegCompression = [NSNumber numberWithInt:60];
     pixelsTarget = [NSNumber numberWithInt:1200000];
@@ -119,8 +124,21 @@ NSString* version = @"0.0.1";
             [session beginConfiguration];
             [self setCaptureSize];
             [session addInput:cameraInput];
+            [session addOutput:cameraOutput];
             [session commitConfiguration];
             [session startRunning];
+            
+            for (AVCaptureConnection *connection in cameraOutput.connections) {
+                for (AVCaptureInputPort *port in [connection inputPorts]) {
+                    if ([[port mediaType] isEqual:AVMediaTypeVideo] ) {
+                        videoConnection = connection;
+                        break;
+                    }
+                }
+                if (videoConnection) { break; }
+            }
+
+            
             
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -135,6 +153,7 @@ NSString* version = @"0.0.1";
         } else {
             [session beginConfiguration];
             [session removeInput:cameraInput];
+            [session removeOutput:cameraOutput];
             [session commitConfiguration];
             [session stopRunning];
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -268,40 +287,17 @@ NSString* version = @"0.0.1";
 
 - (void)capture:(CDVInvokedUrlCommand*)command {
     
-    cameraOutput = [[AVCaptureStillImageOutput alloc] init];
-    [session beginConfiguration];
-    [session addOutput:cameraOutput];
-    [session commitConfiguration];
-    
-    
-    NSDictionary *outputSettings = @{ AVVideoCodecKey : AVVideoCodecJPEG};
-    [cameraOutput setOutputSettings:outputSettings];
-    
-    AVCaptureConnection *videoConnection = nil;
-    for (AVCaptureConnection *connection in cameraOutput.connections) {
-        for (AVCaptureInputPort *port in [connection inputPorts]) {
-            if ([[port mediaType] isEqual:AVMediaTypeVideo] ) {
-                videoConnection = connection;
-                break;
-            }
-        }
-        if (videoConnection) { break; }
-    }
-    
     [cameraOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler:
         ^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
             
-            [session beginConfiguration];
-            [session removeOutput:cameraOutput];
-            [session commitConfiguration];
-
-            [cameraHandle lockForConfiguration:nil];
+            //reset flash after capture
             if ([localFlashState  isEqual: @"torch"])
             {
+                [cameraHandle lockForConfiguration:nil];
                 [cameraHandle setTorchMode:AVCaptureTorchModeOn];
                 [cameraHandle setFlashMode:AVCaptureFlashModeOn];
+                [cameraHandle unlockForConfiguration];
             }
-            [cameraHandle unlockForConfiguration];
             
             //get image
             NSData *largeJpeg = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer] ;
@@ -388,10 +384,7 @@ NSString* version = @"0.0.1";
 
 
 - (void)setCaptureSize {
-    
-    NSLog(@"PIXELS_TARGET: %@", pixelsTarget);
-    NSLog(@"JPEG_COMPRESSION: %@", jpegCompression);
-    
+
     NSMutableArray* formats = [NSMutableArray array];
     [formats addObject:@"AVCaptureSessionPreset352x288"];
     [formats addObject:@"AVCaptureSessionPreset640x480"];
