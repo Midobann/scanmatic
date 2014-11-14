@@ -372,9 +372,9 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 					
 					Bitmap inImg = BitmapFactory.decodeByteArray(data, 0, data.length);
 					
-					// Matrix matrix = new Matrix();
-				 //    matrix.postRotate(90);
-				 //    inImg = Bitmap.createBitmap(inImg, 0, 0, inImg.getWidth(), inImg.getHeight(), matrix, true);
+					Matrix matrix = new Matrix();
+				    matrix.postRotate(90);
+				    inImg = Bitmap.createBitmap(inImg, 0, 0, inImg.getWidth(), inImg.getHeight(), matrix, true);
 					
 					ByteArrayOutputStream stream = new ByteArrayOutputStream();
 					inImg.compress(Bitmap.CompressFormat.JPEG, jpegCompression, stream);
