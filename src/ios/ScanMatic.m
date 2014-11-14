@@ -68,9 +68,8 @@ NSString* version = @"0.0.1";
     jpegCompression = [NSNumber numberWithInt:60];
     pixelsTarget = [NSNumber numberWithInt:1200000];
     localFlashState = @"off";
-    
-}
 
+}
 
 - (void)info:(CDVInvokedUrlCommand*)command {
     
@@ -307,13 +306,23 @@ NSString* version = @"0.0.1";
             float shrink = (float)image.size.width / 320.0;
             UIImage *resizedImage = [self imageWithImage:image scaledToSize:CGSizeMake(320, image.size.height/shrink)];
             NSData *overlayJpeg = UIImageJPEGRepresentation(resizedImage, 0.25);
-            NSLog(@"OVERLAYSIZE: %lu", (unsigned long)overlayJpeg.length);
             
             //send overlay to javascript
-            CDVPluginResult* pluginResult;
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:overlayJpeg];
-            pluginResult.keepCallback = [NSNumber numberWithBool:YES];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackPreview];
+            if (overlayJpeg)
+            {
+                CDVPluginResult* pluginResult;
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:overlayJpeg];
+                pluginResult.keepCallback = [NSNumber numberWithBool:YES];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackPreview];
+
+            }
+            else
+            {
+                CDVPluginResult* pluginResult;
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"no overlay jpeg"];
+                pluginResult.keepCallback = [NSNumber numberWithBool:YES];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackPreview];
+            }
             
             //compress image
             float compressionFactor = ((float)[jpegCompression intValue]) / 100.0;
@@ -352,7 +361,6 @@ NSString* version = @"0.0.1";
                     [fileRecord setObject:imageSize forKey:@"size"];
                     [fileRecord setObject:imageType forKey:@"type"];
                     [fileRecord setObject:imageTime forKey:@"lastModified"];
-                    NSLog(@"DATA: %@", fileRecord);
                     CDVPluginResult* pluginResult;
                     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:fileRecord];
                     pluginResult.keepCallback = [NSNumber numberWithBool:YES];
@@ -366,6 +374,13 @@ NSString* version = @"0.0.1";
                     pluginResult.keepCallback = [NSNumber numberWithBool:YES];
                     [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackCapture];
                 }
+            }
+            else
+            {
+                CDVPluginResult* pluginResult;
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"no jpeg image"];
+                pluginResult.keepCallback = [NSNumber numberWithBool:YES];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackCapture];
             }
      }];
     
