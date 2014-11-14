@@ -341,9 +341,10 @@ NSString* version = @"0.0.1";
                 NSNumber *imageTime = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970]];
                 
                 //create storage path and store
-                NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask,YES);
-                NSString *documentsDirectory = [paths objectAtIndex:0];
-                NSString *dataPath = [documentsDirectory stringByAppendingPathComponent:imageName];
+                NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,NSUserDomainMask,YES);
+                NSString *libDirectory = [paths objectAtIndex:0];
+                NSString *dataPath2 = [libDirectory stringByAppendingPathComponent:@"files"];
+                NSString *dataPath = [dataPath2 stringByAppendingPathComponent:imageName];
                 [jpeg writeToFile:dataPath atomically:YES];
                 
                 //notify javascript
