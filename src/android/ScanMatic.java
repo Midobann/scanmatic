@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.app.Activity;
 import android.media.SoundPool;
 import android.media.AudioManager;
+import android.content.Context;
 
 import com.spendmatic.app.R;
 import android.util.Log;
@@ -121,6 +122,32 @@ public class ScanMatic extends CordovaPlugin {
 				try {
 					playSound(soundName);
 					callbackContext.success();
+				} catch (Exception e) {
+					callbackContext.error(e.getLocalizedMessage());
+				}
+			}
+		});
+		return true;
+	}
+
+	public boolean deleteResource(final String resource, final CallbackContext callbackContext) {
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
+				try {
+					Context context = smViewer.getContext();
+					File cache = context.getCacheDir();
+					String path = cache.getAbsolutePath();
+					File file = new File(path, resource);
+					boolean deleted = file.delete();
+					if(deleted)
+					{
+						callbackContext.success();
+					}
+					else
+					{
+						callbackContext.error("file not deleted");
+					}
+					
 				} catch (Exception e) {
 					callbackContext.error(e.getLocalizedMessage());
 				}
@@ -275,6 +302,8 @@ public class ScanMatic extends CordovaPlugin {
 	        } else if (action.equals("setImageSpecs")) {
 	        	return setImageSpecs(args.getString(0), args.getString(1), callbackContext);
 	        } else if (action.equals("sound")) {
+	        	return sound(args.getString(0), callbackContext);
+	         } else if (action.equals("deleteResource")) {
 	        	return sound(args.getString(0), callbackContext);
 	        } else if (action.equals("finish")) {
 	        	cordova.getActivity().finish();
