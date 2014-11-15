@@ -29,7 +29,7 @@
     NSNumber *pixelsTarget;
     NSString *localFlashState;
 
-    BOOL uploadInProgress;
+    int uploadInProgress;
     int backgroundTime;
 }
 

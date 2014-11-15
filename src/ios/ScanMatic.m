@@ -68,7 +68,7 @@ NSString* version = @"0.0.1";
     jpegCompression = [NSNumber numberWithInt:60];
     pixelsTarget = [NSNumber numberWithInt:1200000];
     localFlashState = @"off";
-    uploadInProgress = NO;
+    uploadInProgress = 0;
     backgroundTime = 0;
     
 }
@@ -294,7 +294,7 @@ NSString* version = @"0.0.1";
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
-        while(uploadInProgress && backgroundTime < 60)
+        while((uploadInProgress != 0) && (backgroundTime < 300))
         {
             [NSThread sleepForTimeInterval:2.0f];
             backgroundTime += 2;
@@ -333,7 +333,7 @@ NSString* version = @"0.0.1";
 
     @try {
 
-        uploadInProgress = YES;
+        ++uploadInProgress;
 
         [session beginConfiguration];
         [session addOutput:cameraOutput];
@@ -544,7 +544,7 @@ NSString* version = @"0.0.1";
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
 
-    uploadInProgress = NO;
+    --uploadInProgress;
 
 }
 
