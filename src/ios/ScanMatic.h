@@ -28,6 +28,9 @@
     NSNumber *jpegCompression;
     NSNumber *pixelsTarget;
     NSString *localFlashState;
+
+    BOOL uploadInProgress;
+    int backgroundTime;
 }
 
 @property(nonatomic, retain) IBOutlet UIView *cameraPreview;

@@ -68,6 +68,8 @@ NSString* version = @"0.0.1";
     jpegCompression = [NSNumber numberWithInt:60];
     pixelsTarget = [NSNumber numberWithInt:1200000];
     localFlashState = @"off";
+    uploadInProgress = NO;
+    backgroundTime = 0;
     
 }
 
@@ -277,12 +279,29 @@ NSString* version = @"0.0.1";
 }
 
 - (void)onResume {
-    NSLog(@"Resuming application");
+    backgroundTime = 0;
     [self setFlash];
 }
 
 - (void)onPause {
-    NSLog(@"Pausing application");
+    
+    UIApplication *app = [UIApplication sharedApplication];
+    
+    UIBackgroundTaskIdentifier bgTask = 0;
+    bgTask = [app beginBackgroundTaskWithName:@"uploadWait" expirationHandler:^{
+        [app endBackgroundTask:bgTask];
+    }];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        while(uploadInProgress && backgroundTime < 60)
+        {
+            [NSThread sleepForTimeInterval:2.0f];
+            backgroundTime += 2;
+        }
+        backgroundTime = 0;
+        [app endBackgroundTask:bgTask];
+    });
 }
 
 - (void)setImageSpecs:(CDVInvokedUrlCommand*)command {
@@ -311,8 +330,11 @@ NSString* version = @"0.0.1";
 }
 
 - (void)capture:(CDVInvokedUrlCommand*)command {
-    
+
     @try {
+
+        uploadInProgress = YES;
+
         [session beginConfiguration];
         [session addOutput:cameraOutput];
         [session commitConfiguration];
@@ -521,6 +543,8 @@ NSString* version = @"0.0.1";
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[e reason]];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
+
+    uploadInProgress = NO;
 
 }
 
