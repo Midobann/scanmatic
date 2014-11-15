@@ -36,6 +36,7 @@
 
 - (void) onPause;
 - (void) onResume;
+- (void) setFlash;
 
 - (void)info:(CDVInvokedUrlCommand*)command;
 - (void)camera:(CDVInvokedUrlCommand*)command;
