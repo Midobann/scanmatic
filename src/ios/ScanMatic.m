@@ -435,31 +435,31 @@ NSString* version = @"0.0.1";
     session.sessionPreset = captureFormat;
 }
 
-// - (void)deleteResource:(CDVInvokedUrlCommand*)command {
+- (void)deleteResource:(CDVInvokedUrlCommand*)command {
     
-//     NSString *resName = [command.arguments objectAtIndex:0];
+    NSString *resName = [command.arguments objectAtIndex:0];
 
-//     //create storage path and store
-//     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,NSUserDomainMask,YES);
-//     NSString *libDirectory = [paths objectAtIndex:0];
-//     NSString *dataPath2 = [libDirectory stringByAppendingPathComponent:@"files"];
-//     NSString *dataPath = [dataPath2 stringByAppendingPathComponent:resName];
+    //create storage path and store
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,NSUserDomainMask,YES);
+    NSString *libDirectory = [paths objectAtIndex:0];
+    NSString *dataPath2 = [libDirectory stringByAppendingPathComponent:@"files"];
+    NSString *dataPath = [dataPath2 stringByAppendingPathComponent:resName];
     
-//     NSError *error;
-//     [[NSFileManager defaultManager]removeItemAtPath:dataPath error:&error];
+    NSError *error;
+    [[NSFileManager defaultManager]removeItemAtPath:dataPath error:&error];
 
-//     if (error)
-//     {
-//         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
-//         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-//     }
-//     else
-//     {
-//         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-//         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-//     }
+    if (error)
+    {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    else
+    {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
 
-// }
+}
 
 
 

@@ -130,31 +130,31 @@ public class ScanMatic extends CordovaPlugin {
 		return true;
 	}
 
-	// public boolean deleteResource(final String resource, final CallbackContext callbackContext) {
-	// 	cordova.getThreadPool().execute(new Runnable() {
-	// 		public void run() {
-	// 			try {
-	// 				Context context = smViewer.getContext();
-	// 				File cache = context.getCacheDir();
-	// 				String path = cache.getAbsolutePath();
-	// 				File file = new File(path, resource);
-	// 				boolean deleted = file.delete();
-	// 				if(deleted)
-	// 				{
-	// 					callbackContext.success();
-	// 				}
-	// 				else
-	// 				{
-	// 					callbackContext.error("file not deleted");
-	// 				}
+	public boolean deleteResource(final String resource, final CallbackContext callbackContext) {
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
+				try {
+					Context context = smViewer.getContext();
+					File cache = context.getCacheDir();
+					String path = cache.getAbsolutePath();
+					File file = new File(path, resource);
+					boolean deleted = file.delete();
+					if(deleted)
+					{
+						callbackContext.success();
+					}
+					else
+					{
+						callbackContext.error("file not deleted");
+					}
 					
-	// 			} catch (Exception e) {
-	// 				callbackContext.error(e.getLocalizedMessage());
-	// 			}
-	// 		}
-	// 	});
-	// 	return true;
-	// }
+				} catch (Exception e) {
+					callbackContext.error(e.getLocalizedMessage());
+				}
+			}
+		});
+		return true;
+	}
 
 	public boolean startCamera(final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
@@ -303,8 +303,8 @@ public class ScanMatic extends CordovaPlugin {
 	        	return setImageSpecs(args.getString(0), args.getString(1), callbackContext);
 	        } else if (action.equals("sound")) {
 	        	return sound(args.getString(0), callbackContext);
-	        // } else if (action.equals("deleteResource")) {
-	        // 	return deleteResource(args.getString(0), callbackContext);
+	        } else if (action.equals("deleteResource")) {
+	        	return deleteResource(args.getString(0), callbackContext);
 	        } else if (action.equals("finish")) {
 	        	cordova.getActivity().finish();
 	        	return true;
