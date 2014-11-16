@@ -82,20 +82,12 @@ public class ScanMatic extends CordovaPlugin {
 					JSONObject result = new JSONObject();
 					
 					Intent intent = cordova.getActivity().getIntent();
-					String recAction = intent.getAction();
-					String recData = intent.getDataString();
-					String recExtra = intent.getStringExtra(Intent.EXTRA_TEXT);
-					String recUri = (intent.toUri(Intent.URI_INTENT_SCHEME)).toString();
 					
-					result.put("action", "B-"+recAction);
-					result.put("data",  "B-"+recData);
-					result.put("extra",  "B-"+recExtra);
-					result.put("uri",  "B-"+recUri);
-					
-					Log.e("NEW_INTENT_ACTION", "ACTION: " + recAction);
-					Log.e("NEW_INTENT_DATA", "DATA: " + recData);
-					Log.e("NEW_INTENT_EXTRA", "EXTRA: " + recExtra);
-					Log.e("NEW_INTENT_URI", "URI: " + recUri);
+					String recRoute = intent.getStringExtra("route");
+					String recToken = intent.getStringExtra("token");
+
+					result.put("route", recRoute);
+					result.put("token", recToken);
 					
 					callbackContext.success(result);
 				} catch (Exception e) {
