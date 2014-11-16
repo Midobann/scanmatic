@@ -28,6 +28,7 @@
     NSNumber *jpegCompression;
     NSNumber *pixelsTarget;
     NSString *localFlashState;
+    NSMutableDictionary *uriLast;
 
     int uploadInProgress;
     int backgroundTime;
@@ -39,6 +40,7 @@
 
 - (void) onPause;
 - (void) onResume;
+- (void) onLaunch:(NSNotification *)note;
 - (void) setFlash;
 
 - (void)info:(CDVInvokedUrlCommand*)command;
@@ -50,6 +52,7 @@
 - (void)setImageSpecs:(CDVInvokedUrlCommand*)command;
 - (void)sound:(CDVInvokedUrlCommand*)command;
 - (void)deleteResource:(CDVInvokedUrlCommand*)command;
+- (void)getLaunchURI:(CDVInvokedUrlCommand*)command;
 
 - (void)onCapture:(CDVInvokedUrlCommand*)command;
 - (void)onPreview:(CDVInvokedUrlCommand*)command;

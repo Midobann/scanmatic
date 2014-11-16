@@ -18,10 +18,11 @@ NSString* version = @"0.0.1";
 - (void)pluginInitialize {
     
     [super pluginInitialize];
+    uriLast = [NSMutableDictionary dictionary];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPause) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume) name:UIApplicationWillEnterForegroundNotification object:nil];
-
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
     
     CGRect viewBounds = self.viewController.view.bounds;
     viewBounds.size.height += 20;
@@ -548,6 +549,18 @@ NSString* version = @"0.0.1";
 
 }
 
+- (void)getLaunchURI:(CDVInvokedUrlCommand*)command {
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:uriLast];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
 
+- (void)onLaunch:(NSNotification *)note {
+    NSDictionary *noteInfo = [note userInfo];
+    NSString *uri =[[noteInfo objectForKey:@"UIApplicationLaunchOptionsURLKey"] absoluteString];
+    if (uri != nil)
+    {
+        [uriLast setObject:uri forKey:@"uri"];
+    }
+}
 
 @end
