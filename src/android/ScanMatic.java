@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.media.SoundPool;
 import android.media.AudioManager;
 import android.content.Context;
+import android.content.Intent;
 
 import com.spendmatic.app.R;
 import android.util.Log;
@@ -73,6 +74,39 @@ public class ScanMatic extends CordovaPlugin {
 		Log.d(tag, "Initialized");
 	}
 
+	
+	public boolean getLaunchURI(final CallbackContext callbackContext) {
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
+				try {
+					JSONObject result = new JSONObject();
+					
+					Intent intent = cordova.getActivity().getIntent();
+					String recAction = intent.getAction();
+					String recData = intent.getDataString();
+					String recExtra = intent.getStringExtra(Intent.EXTRA_TEXT);
+					String recUri = (intent.toUri(Intent.URI_INTENT_SCHEME)).toString();
+					
+					result.put("action", "B-"+recAction);
+					result.put("data",  "B-"+recData);
+					result.put("extra",  "B-"+recExtra);
+					result.put("uri",  "B-"+recUri);
+					
+					Log.e("NEW_INTENT_ACTION", "ACTION: " + recAction);
+					Log.e("NEW_INTENT_DATA", "DATA: " + recData);
+					Log.e("NEW_INTENT_EXTRA", "EXTRA: " + recExtra);
+					Log.e("NEW_INTENT_URI", "URI: " + recUri);
+					
+					callbackContext.success(result);
+				} catch (Exception e) {
+					callbackContext.error(e.getLocalizedMessage());
+				}
+			}
+		});
+		return true;
+	}
+	
+	
 	@Override
     public void onPause(boolean multitasking) {
     	try{
@@ -286,11 +320,14 @@ public class ScanMatic extends CordovaPlugin {
 	public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
 		
 		try {
-			if (action.equals("camera")) {
-			if (args.getBoolean(0))
-				return startCamera(callbackContext);
-			else
-				return stopCamera(callbackContext);
+			if (action.equals("getLaunchURI")) {
+				return getLaunchURI(callbackContext);
+			}
+			else if (action.equals("camera")) {
+				if (args.getBoolean(0))
+					return startCamera(callbackContext);
+				else
+					return stopCamera(callbackContext);
 			} else if (action.equals("info")) {
 				return info(callbackContext);
 	        } else if (action.equals("capture")) {
