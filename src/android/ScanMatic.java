@@ -84,8 +84,8 @@ public class ScanMatic extends CordovaPlugin {
 					Intent intent = cordova.getActivity().getIntent();
 					
 					String recRoute = intent.getStringExtra("route");
-					String recToken = intent.getStringExtra("token");
-					String recUri = "spendmatic://" + recRoute + "?token=" + recToken;
+					String recToken = intent.getStringExtra("loginToken");
+					String recUri = "spendmatic://" + recRoute + "?loginToken=" + recToken;
 
 					result.put("uri", recUri);
 					
