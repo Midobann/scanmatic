@@ -24,6 +24,7 @@ import android.media.SoundPool;
 import android.media.AudioManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 // import android.content.pm.PackageManager;
 
 import com.spendmatic.app.R;
@@ -35,14 +36,16 @@ public class ScanMatic extends CordovaPlugin {
 	SMViewer smViewer;
 
 	public static final String tag = "ScanMatic";
-	public static final String version = "0.0.1";
-
+	public static String version = "unknown";
+	
 	public static final int shutter = R.raw.shutter;
 	public static final int coin = R.raw.coin;
 	public static final int cashregister = R.raw.cashregister;
 	public static final int alarm = R.raw.alarm;
 	public static final int ding = R.raw.ding;
 
+	
+	
 	public SoundPool soundPool;
 	public HashMap<Integer, Integer> soundPoolMap; 
 
@@ -51,6 +54,7 @@ public class ScanMatic extends CordovaPlugin {
 		super.initialize(cordova, webView);
 			
 		Activity activity = cordova.getActivity();
+		
 		ViewGroup root = (ViewGroup) activity.findViewById(android.R.id.content);
 		View webViewContainer = (View) webView.getParent(); // webView is nested in a LinearLayoutSoftKeyboardDetect
 		smViewer = new SMViewer(activity);
@@ -270,9 +274,17 @@ public class ScanMatic extends CordovaPlugin {
 				public void run() {
 
 					JSONObject result = new JSONObject();
-			
+					
 			    	try {
-			    		// getPackageManager().getPackageInfo(getPackageName(), 0).versionName
+			    		
+			    		
+			    		try {
+							version = cordova.getActivity().getPackageManager().getPackageInfo(cordova.getActivity().getApplicationContext().getPackageName(), 0).versionName;
+						} catch (NameNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+			    		
 			    		JSONObject cacheInfo = new JSONObject();
 			    		File cache = cordova.getActivity().getCacheDir();
 			    		cacheInfo.put("freeSpace", cache.getUsableSpace());
