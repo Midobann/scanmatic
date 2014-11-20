@@ -24,7 +24,7 @@ import android.media.SoundPool;
 import android.media.AudioManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+// import android.content.pm.PackageManager;
 
 import com.spendmatic.app.R;
 import android.util.Log;
@@ -272,11 +272,11 @@ public class ScanMatic extends CordovaPlugin {
 					JSONObject result = new JSONObject();
 			
 			    	try {
-			    		
+			    		// getPackageManager().getPackageInfo(getPackageName(), 0).versionName
 			    		JSONObject cacheInfo = new JSONObject();
 			    		File cache = cordova.getActivity().getCacheDir();
 			    		cacheInfo.put("freeSpace", cache.getUsableSpace());
-			    		result.put("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+			    		result.put("version", version);
 			    		result.put("cache", cacheInfo);
 			    		if(smViewer.smCamera.camera != null){
 			    			result.put("camera", smViewer.smCamera.info());
