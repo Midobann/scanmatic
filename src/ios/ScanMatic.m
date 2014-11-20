@@ -12,8 +12,6 @@
 
 @synthesize cameraPreview;
 
-NSString* version = @"0.0.1";
-
 
 - (void)pluginInitialize {
     
@@ -77,32 +75,39 @@ NSString* version = @"0.0.1";
 - (void)info:(CDVInvokedUrlCommand*)command {
     
     @try {
-        [session beginConfiguration];
-        [self setCaptureSize];
-        [session addInput:cameraInput];
-        [session commitConfiguration];
         
         NSMutableDictionary* info = [NSMutableDictionary dictionary];
-        NSMutableDictionary* camera = [NSMutableDictionary dictionary];
-        NSMutableArray* flashModes = [NSMutableArray array];
         
+        NSString* version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
         [info setObject:version forKey:@"version"];
-        [camera setObject:[cameraHandle localizedName] forKey:@"name"];
-        [flashModes addObject:@"off"];
-        if (cameraHandle.hasFlash && cameraHandle.flashAvailable) {
-            if ([cameraHandle isFlashModeSupported:AVCaptureFlashModeOn]) {
-                [flashModes addObject:@"on"];
+
+        if (cameraHandle != nil)
+        {
+            [session beginConfiguration];
+            [self setCaptureSize];
+            [session addInput:cameraInput];
+            [session commitConfiguration];
+
+            NSMutableDictionary* camera = [NSMutableDictionary dictionary];
+            NSMutableArray* flashModes = [NSMutableArray array];
+            
+            [camera setObject:[cameraHandle localizedName] forKey:@"name"];
+            [flashModes addObject:@"off"];
+            if (cameraHandle.hasFlash && cameraHandle.flashAvailable) {
+                if ([cameraHandle isFlashModeSupported:AVCaptureFlashModeOn]) {
+                    [flashModes addObject:@"on"];
+                }
+                            
+                if ([cameraHandle isFlashModeSupported:AVCaptureFlashModeAuto]) {
+                    [flashModes addObject:@"auto"];
+                }
             }
-                        
-            if ([cameraHandle isFlashModeSupported:AVCaptureFlashModeAuto]) {
-                [flashModes addObject:@"auto"];
+            if (cameraHandle.hasTorch && cameraHandle.torchAvailable) {
+                [flashModes addObject:@"torch"];
             }
+            [camera setObject:flashModes forKey:@"flashModes"];
+            [info setObject:camera forKey:@"camera"];
         }
-        if (cameraHandle.hasTorch && cameraHandle.torchAvailable) {
-            [flashModes addObject:@"torch"];
-        }
-        [camera setObject:flashModes forKey:@"flashModes"];
-        [info setObject:camera forKey:@"camera"];
         
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:info];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];

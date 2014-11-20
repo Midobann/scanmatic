@@ -275,10 +275,11 @@ public class ScanMatic extends CordovaPlugin {
 			    		JSONObject cacheInfo = new JSONObject();
 			    		File cache = cordova.getActivity().getCacheDir();
 			    		cacheInfo.put("freeSpace", cache.getUsableSpace());
-			    		
-			    		result.put("version", version);
-			    		result.put("camera", smViewer.smCamera.info());
+			    		result.put("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
 			    		result.put("cache", cacheInfo);
+			    		if(smViewer.smCamera.camera != null){
+			    			result.put("camera", smViewer.smCamera.info());
+			    		}
 			    		callbackContext.success(result);
 
 			    	} catch (JSONException ex) {
