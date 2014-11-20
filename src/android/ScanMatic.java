@@ -24,6 +24,7 @@ import android.media.SoundPool;
 import android.media.AudioManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 
 import com.spendmatic.app.R;
 import android.util.Log;
