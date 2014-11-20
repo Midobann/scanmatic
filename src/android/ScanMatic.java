@@ -36,7 +36,6 @@ public class ScanMatic extends CordovaPlugin {
 	SMViewer smViewer;
 
 	public static final String tag = "ScanMatic";
-	public static String version = "unknown";
 	
 	public static final int shutter = R.raw.shutter;
 	public static final int coin = R.raw.coin;
@@ -277,9 +276,10 @@ public class ScanMatic extends CordovaPlugin {
 					
 			    	try {
 			    		
-			    		
+			    		int version = 999;
+
 			    		try {
-							version = cordova.getActivity().getPackageManager().getPackageInfo(cordova.getActivity().getApplicationContext().getPackageName(), 0).versionName;
+							version = cordova.getActivity().getPackageManager().getPackageInfo(cordova.getActivity().getApplicationContext().getPackageName(), 0).versionCode;
 						} catch (NameNotFoundException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
