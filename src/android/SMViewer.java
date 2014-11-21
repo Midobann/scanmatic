@@ -41,6 +41,11 @@ public class SMViewer extends SurfaceView implements SurfaceHolder.Callback, OnT
 		surfaceHolder.addCallback(this);
 		lastmillis = System.currentTimeMillis();
 		numTouch = 0;
+		try{
+			smCamera = new SMCamera(this);
+		}catch(Exception e){
+			Log.e("Initialization", "no camera available for SMViewer");
+		}
 	}
 
 	public boolean requestCapture() {   
