@@ -75,6 +75,12 @@ public class ScanMatic extends CordovaPlugin {
 		soundPoolMap.put(alarm, soundPool.load(activity, alarm, 1));
 		soundPoolMap.put(ding, soundPool.load(activity, ding, 1));
 
+		try{
+			smViewer.smCamera = new SMCamera(smViewer);
+		}catch(Exception e){
+			Log.e("Initialization", "failed to init camera in sm viewer");
+		}
+
 		Log.d(tag, "Initialized");
 	}
 
@@ -219,7 +225,7 @@ public class ScanMatic extends CordovaPlugin {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				try {
-					if ((smViewer != null) && (smViewer.smCamera != null))
+					if ((smViewer != null) && (smViewer.smCamera != null) && (smViewer.smCamera.camera != null))
 						{smViewer.smCamera.setFlash(state);}
 					callbackContext.success();
 				} catch (Exception e) {
