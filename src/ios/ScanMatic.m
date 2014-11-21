@@ -22,8 +22,9 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume) name:UIApplicationWillEnterForegroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
     
-    CGRect viewBounds = self.viewController.view.bounds;
-    viewBounds.size.height += 20;
+    CGRect viewBounds = [[UIScreen mainScreen] bounds];
+    //NSLog(@"VIDEO BOUNDS w: %.2f h: %.2f", viewBounds.size.width, viewBounds.size.height);
+    //viewBounds.size.height += 20;
 
     viewBounds.origin = self.viewController.view.bounds.origin;
     
@@ -40,6 +41,7 @@
     AVCaptureVideoPreviewLayer *captureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:session];
     
     captureVideoPreviewLayer.videoGravity = AVLayerVideoGravityResize;
+    //captureVideoPreviewLayer.
 
     captureVideoPreviewLayer.frame = self.cameraPreview.bounds;
     [self.cameraPreview.layer addSublayer:captureVideoPreviewLayer];
