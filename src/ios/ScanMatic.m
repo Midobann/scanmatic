@@ -17,6 +17,7 @@
     
     [super pluginInitialize];
     uriLast = [NSMutableDictionary dictionary];
+    [uriLast setObject:@"spendmatic://null?loginToken=null" forKey:@"uri"];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPause) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume) name:UIApplicationWillEnterForegroundNotification object:nil];
@@ -83,14 +84,14 @@
         NSString* version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
         [info setObject:version forKey:@"version"];
 
-        if ((cameraHandle != nil) && (session != nil))
+        if (cameraHandle != nil)
         {
             [session beginConfiguration];
             [self setCaptureSize];
             [session addInput:cameraInput];
             [session addOutput:cameraOutput];
             [session commitConfiguration];
-            
+
             for (AVCaptureConnection *connection in cameraOutput.connections) {
                 for (AVCaptureInputPort *port in [connection inputPorts]) {
                     if ([[port mediaType] isEqual:AVMediaTypeVideo] ) {
@@ -101,7 +102,7 @@
                 if (videoConnection) { break; }
             }
 
-
+            
             NSMutableDictionary* camera = [NSMutableDictionary dictionary];
             NSMutableArray* flashModes = [NSMutableArray array];
             
