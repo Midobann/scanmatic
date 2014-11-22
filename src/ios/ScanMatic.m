@@ -83,12 +83,24 @@
         NSString* version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
         [info setObject:version forKey:@"version"];
 
-        if (cameraHandle != nil)
+        if ((cameraHandle != nil) && (session != nil))
         {
             [session beginConfiguration];
             [self setCaptureSize];
             [session addInput:cameraInput];
+            [session addOutput:cameraOutput];
             [session commitConfiguration];
+            
+            for (AVCaptureConnection *connection in cameraOutput.connections) {
+                for (AVCaptureInputPort *port in [connection inputPorts]) {
+                    if ([[port mediaType] isEqual:AVMediaTypeVideo] ) {
+                        videoConnection = connection;
+                        break;
+                    }
+                }
+                if (videoConnection) { break; }
+            }
+
 
             NSMutableDictionary* camera = [NSMutableDictionary dictionary];
             NSMutableArray* flashModes = [NSMutableArray array];
@@ -343,19 +355,6 @@
 
         ++uploadInProgress;
 
-        [session beginConfiguration];
-        [session addOutput:cameraOutput];
-        [session commitConfiguration];
-        
-        for (AVCaptureConnection *connection in cameraOutput.connections) {
-            for (AVCaptureInputPort *port in [connection inputPorts]) {
-                if ([[port mediaType] isEqual:AVMediaTypeVideo] ) {
-                    videoConnection = connection;
-                    break;
-                }
-            }
-            if (videoConnection) { break; }
-        }
     }
     @catch (NSException * e) {
         NSLog(@"Prepare Capture Exception: %@", e);
