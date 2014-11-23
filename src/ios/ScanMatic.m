@@ -92,15 +92,7 @@
             [session addOutput:cameraOutput];
             [session commitConfiguration];
 
-            for (AVCaptureConnection *connection in cameraOutput.connections) {
-                for (AVCaptureInputPort *port in [connection inputPorts]) {
-                    if ([[port mediaType] isEqual:AVMediaTypeVideo] ) {
-                        videoConnection = connection;
-                        break;
-                    }
-                }
-                if (videoConnection) { break; }
-            }
+            
 
             
             NSMutableDictionary* camera = [NSMutableDictionary dictionary];
@@ -109,17 +101,17 @@
             [camera setObject:[cameraHandle localizedName] forKey:@"name"];
             [flashModes addObject:@"off"];
             if (cameraHandle.hasFlash && cameraHandle.flashAvailable) {
-                if ([cameraHandle isFlashModeSupported:AVCaptureFlashModeOn]) {
-                    [flashModes addObject:@"on"];
-                }
-                            
+//                if ([cameraHandle isFlashModeSupported:AVCaptureFlashModeOn]) {
+//                    [flashModes addObject:@"on"];
+//                }
+                
                 if ([cameraHandle isFlashModeSupported:AVCaptureFlashModeAuto]) {
                     [flashModes addObject:@"auto"];
                 }
             }
-            if (cameraHandle.hasTorch && cameraHandle.torchAvailable) {
-                [flashModes addObject:@"torch"];
-            }
+//            if (cameraHandle.hasTorch && cameraHandle.torchAvailable) {
+//                [flashModes addObject:@"torch"];
+//            }
             [camera setObject:flashModes forKey:@"flashModes"];
             [info setObject:camera forKey:@"camera"];
         }
@@ -355,6 +347,16 @@
     @try {
 
         ++uploadInProgress;
+        
+        for (AVCaptureConnection *connection in cameraOutput.connections) {
+            for (AVCaptureInputPort *port in [connection inputPorts]) {
+                if ([[port mediaType] isEqual:AVMediaTypeVideo] ) {
+                    videoConnection = connection;
+                    break;
+                }
+            }
+            if (videoConnection) { break; }
+        }
 
     }
     @catch (NSException * e) {
@@ -392,10 +394,10 @@
                 }
                 
                 //reset flash and output
-                [session beginConfiguration];
-                [session removeOutput:cameraOutput];
-                [session commitConfiguration];
-                [self setFlash];
+//                [session beginConfiguration];
+//                [session removeOutput:cameraOutput];
+//                [session commitConfiguration];
+//                [self setFlash];
 
                 //compress image
                 float compressionFactor = ((float)[jpegCompression intValue]) / 100.0;
