@@ -38,6 +38,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
     
     public int jpegCompression = 60;
     public int pixelsTarget = 1200000;
+    public int pixelsCaptureTarget = 1200000;
 
     String flash = null;
     public boolean active = false;
@@ -208,7 +209,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 
 
 		//Set picture size
-		int desiredArea = pixelsTarget;
+		int desiredArea = pixelsCaptureTarget;
 		List<Camera.Size> supportedSizes = params.getSupportedPictureSizes();
 		
 		Camera.Size best1 = supportedSizes.get(0);

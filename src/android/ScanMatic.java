@@ -230,12 +230,13 @@ public class ScanMatic extends CordovaPlugin {
 	}
 
 	//setting capture dimensions and compression
-	public boolean setImageSpecs(final String compression, final String pixels, final CallbackContext callbackContext) {
+	public boolean setImageSpecs(final String compression, final String pixelsOutput, final String pixelsCapture, final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				try {
 					smViewer.smCamera.jpegCompression = Integer.parseInt(compression);
-					smViewer.smCamera.pixelsTarget = Integer.parseInt(pixels);
+					smViewer.smCamera.pixelsTarget = Integer.parseInt(pixelsOutput);
+					smViewer.smCamera.pixelsCaptureTarget = Integer.parseInt(pixelsCapture);
 					if (smViewer.smCamera.active)
 					{
 						smViewer.smCamera.startPreview();
@@ -342,7 +343,7 @@ public class ScanMatic extends CordovaPlugin {
 	        } else if (action.equals("flash")) {
 	        	return flash(args.getString(0), callbackContext);
 	        } else if (action.equals("setImageSpecs")) {
-	        	return setImageSpecs(args.getString(0), args.getString(1), callbackContext);
+	        	return setImageSpecs(args.getString(0), args.getString(1), args.getString(2), callbackContext);
 	        } else if (action.equals("sound")) {
 	        	return sound(args.getString(0), callbackContext);
 	        } else if (action.equals("deleteResource")) {
