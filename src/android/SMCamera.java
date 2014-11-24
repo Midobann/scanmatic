@@ -357,7 +357,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 				    
 				    //scale if too big
 				    int imgArea = inImg.getWidth() * inImg.getHeight();
-					if (1.5 * pixelsTarget) < imgArea
+					if ((1.5 * pixelsTarget) < imgArea)
 					{
 						float scaler = (float)imgArea / (float)pixelsTarget;
 						scaler = Math.sqrt(scaler);
