@@ -264,23 +264,6 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 			}
 		}
 
-		// int desiredArea = pixelsTarget;
-		// List<Camera.Size> supportedSizes = params.getSupportedPictureSizes();
-		// int maxAreaDiff = 100000000;
-		// int maxWidth = 0;
-		// int maxHeight = 0;
-		// for (int i=0; i<supportedSizes.size(); i++)
-		// {
-		// 	int currentArea = supportedSizes.get(i).width * supportedSizes.get(i).height;
-		// 	if (Math.abs(currentArea - desiredArea) < maxAreaDiff)
-		// 	{
-		// 		maxAreaDiff = Math.abs(currentArea - desiredArea);
-		// 		maxWidth = supportedSizes.get(i).width;
-		// 		maxHeight = supportedSizes.get(i).height;
-		// 	}
-		// }
-		// params.setPictureSize(maxWidth, maxHeight);
-
 		List<String> focusModes = params.getSupportedFocusModes();
 
 		if (autofocus && focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) 
@@ -371,11 +354,24 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 				if (smViewer.captureCallback != null) {
 					
 					Bitmap inImg = BitmapFactory.decodeByteArray(data, 0, data.length);
+				    
+				    //scale if too big
+				    int imgArea = inImg.getWidth() * inImg.getHeight();
+					if (1.5 * pixelsTarget) < imgArea
+					{
+						float scaler = (float)imgArea / (float)pixelsTarget;
+						scaler = Math.sqrt(scaler);
+						int w = (int)((float)(inImg.getWidth()) / scaler);
+						int h = (int)((float)(inImg.getHeight()) / scaler);
+						inImg = Bitmap.createScaledBitmap(inImg, w, h, true);
+					}
 					
+					//rotate
 					Matrix matrix = new Matrix();
 				    matrix.postRotate(90);
-				    inImg = Bitmap.createBitmap(inImg, 0, 0, inImg.getWidth(), inImg.getHeight(), matrix, true);
+					inImg = Bitmap.createBitmap(inImg, 0, 0, inImg.getWidth(), inImg.getHeight(), matrix, true);
 					
+					//compress
 					ByteArrayOutputStream stream = new ByteArrayOutputStream();
 					inImg.compress(Bitmap.CompressFormat.JPEG, jpegCompression, stream);
 					
