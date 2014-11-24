@@ -359,10 +359,10 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 				    int imgArea = inImg.getWidth() * inImg.getHeight();
 					if ((1.5 * pixelsTarget) < imgArea)
 					{
-						float scaler = (float)imgArea / (float)pixelsTarget;
+						double scaler = (double)imgArea / (double)pixelsTarget;
 						scaler = Math.sqrt(scaler);
-						int w = (int)((float)(inImg.getWidth()) / scaler);
-						int h = (int)((float)(inImg.getHeight()) / scaler);
+						int w = (int)((double)(inImg.getWidth()) / scaler);
+						int h = (int)((double)(inImg.getHeight()) / scaler);
 						inImg = Bitmap.createScaledBitmap(inImg, w, h, true);
 					}
 					
