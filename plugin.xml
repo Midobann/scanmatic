@@ -7,6 +7,8 @@
 	<name>ScanMatic</name>
 	
 	<description>Image capture components</description>
+
+	<preference name="URL_SCHEME" />
 	
 	<engines>
 		<engine name="cordova" version=">=3.1.0" /><!-- Needs cordova/urlutil -->
@@ -14,49 +16,70 @@
 
 	<platform name="android">
 		<config-file target="res/xml/config.xml" parent="/*">
-            <feature name="ScanMatic"> 
-                <param name="android-package" value="com.spendmatic.scanmatic.ScanMatic"/>
-                <param name="onload" value="true" />
-            </feature>
-        </config-file>
+			<feature name="ScanMatic"> 
+				<param name="android-package" value="com.spendmatic.scanmatic.ScanMatic"/>
+				<param name="onload" value="true" />
+			</feature>
+		</config-file>
 
-        <config-file target="AndroidManifest.xml" parent="/manifest">
-        	<uses-permission android:name="android.permission.CAMERA" />
-		    <uses-feature android:name="android.hardware.camera" />
-		    <uses-feature android:name="android.hardware.camera.autofocus" />
-        </config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.CAMERA" />
+			<uses-feature android:name="android.hardware.camera" />
+			<uses-feature android:name="android.hardware.camera.autofocus" />
+		</config-file>
 
-    	<source-file src="src/android/ScanMatic.java" target-dir="src/com/spendmatic/scanmatic" />
-    	<source-file src="src/android/SMCamera.java" target-dir="src/com/spendmatic/scanmatic" />
-    	<source-file src="src/android/SMViewer.java" target-dir="src/com/spendmatic/scanmatic" />
-    	<source-file src="src/android/Thread_FramePrep.java" target-dir="src/com/spendmatic/scanmatic" />
+		<config-file target="AndroidManifest.xml" parent="/*/application/activity">
+			<intent-filter>
+				<data android:scheme="$URL_SCHEME"/>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+			</intent-filter>
+		</config-file>
 
-    	<resource-file src="shutter.mp3" target="res/raw/shutter.mp3" />
-    	<resource-file src="coin.mp3" target="res/raw/coin.mp3" />
-    	<resource-file src="cashregister.mp3" target="res/raw/cashregister.mp3" />
-    	<resource-file src="ding.mp3" target="res/raw/ding.mp3" />
-    	<resource-file src="alarm.mp3" target="res/raw/alarm.mp3" />
-			
+		<source-file src="src/android/ScanMatic.java" target-dir="src/com/spendmatic/scanmatic" />
+		<source-file src="src/android/SMCamera.java" target-dir="src/com/spendmatic/scanmatic" />
+		<source-file src="src/android/SMViewer.java" target-dir="src/com/spendmatic/scanmatic" />
+		<source-file src="src/android/Thread_FramePrep.java" target-dir="src/com/spendmatic/scanmatic" />
+
+		<resource-file src="shutter.mp3" target="res/raw/shutter.mp3" />
+		<resource-file src="coin.mp3" target="res/raw/coin.mp3" />
+		<resource-file src="cashregister.mp3" target="res/raw/cashregister.mp3" />
+		<resource-file src="ding.mp3" target="res/raw/ding.mp3" />
+		<resource-file src="alarm.mp3" target="res/raw/alarm.mp3" />
+
 	</platform>
 
 	<platform name="ios">
 		<config-file target="config.xml" parent="/*">
 			<feature name="ScanMatic">
-		        <param name="ios-package" value="ScanMatic" />
-		        <param name="onload" value="true" />
-		    </feature>
+				<param name="ios-package" value="ScanMatic" />
+				<param name="onload" value="true" />
+			</feature>
+		</config-file>
+
+		<config-file target="*-Info.plist" parent="CFBundleURLTypes">
+			<array>
+				<dict>
+					<key>CFBundleURLSchemes</key>
+					<array>
+						<string>$URL_SCHEME</string>
+					</array>
+				</dict>
+			</array>
 		</config-file>
 
 		<header-file src="src/ios/ScanMatic.h"/>
 		<source-file src="src/ios/ScanMatic.m"/>
+		
 		<framework src="AVFoundation.framework" />
 		<framework src="ImageIO.framework" />
 
 		<resource-file src="shutter.mp3" target="Resources/shutter.mp3" />
-    	<resource-file src="coin.mp3" target="Resources/coin.mp3" />
-    	<resource-file src="cashregister.mp3" target="Resources/cashregister.mp3" />
-    	<resource-file src="ding.mp3" target="Resources/ding.mp3" />
-    	<resource-file src="alarm.mp3" target="Resources/alarm.mp3" />
+		<resource-file src="coin.mp3" target="Resources/coin.mp3" />
+		<resource-file src="cashregister.mp3" target="Resources/cashregister.mp3" />
+		<resource-file src="ding.mp3" target="Resources/ding.mp3" />
+		<resource-file src="alarm.mp3" target="Resources/alarm.mp3" />
 
 	</platform>
 	

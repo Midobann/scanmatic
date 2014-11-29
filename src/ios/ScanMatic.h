@@ -28,7 +28,7 @@
     NSNumber *jpegCompression;
     NSNumber *pixelsTarget;
     NSString *localFlashState;
-    NSMutableDictionary *uriLast;
+    NSString *launchURI;
 
     int uploadInProgress;
     int backgroundTime;

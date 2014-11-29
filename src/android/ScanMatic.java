@@ -47,10 +47,29 @@ public class ScanMatic extends CordovaPlugin {
 	public SoundPool soundPool;
 	public HashMap<Integer, Integer> soundPoolMap; 
 
+	private String intentToLaunchURI(Intent intent) {
+		String intentString = intent.getDataString();
+		String recRoute = intent.getStringExtra("route");
+		String recToken = intent.getStringExtra("loginToken");
+		if (intentString != null) {
+			return intentString + recRoute + "?loginToken=" + recToken;
+		} else {
+			return null; 
+		}
+	}
+
+	@Override
+	public void onNewIntent(Intent intent) {
+		if (intent.getDataString() != null) {
+			webView.loadUrl("javascript:handleOpenURL('" + intentToLaunchURI(intent) + "');");
+			intent.setData(null);
+		}
+	}
+
 	@Override
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
 		super.initialize(cordova, webView);
-			
+
 		Activity activity = cordova.getActivity();
 		
 		ViewGroup root = (ViewGroup) activity.findViewById(android.R.id.content);
@@ -82,17 +101,8 @@ public class ScanMatic extends CordovaPlugin {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				try {
-					JSONObject result = new JSONObject();
-					
 					Intent intent = cordova.getActivity().getIntent();
-					
-					String recRoute = intent.getStringExtra("route");
-					String recToken = intent.getStringExtra("loginToken");
-					String recUri = "spendmatic://" + recRoute + "?loginToken=" + recToken;
-
-					result.put("uri", recUri);
-					
-					callbackContext.success(result);
+					callbackContext.success(intentToLaunchURI(intent));
 				} catch (Exception e) {
 					callbackContext.error(e.getLocalizedMessage());
 				}
@@ -103,28 +113,28 @@ public class ScanMatic extends CordovaPlugin {
 	
 	
 	@Override
-    public void onPause(boolean multitasking) {
-    	try{
-    		smViewer.smCamera.stopPreview();
-    		Log.d(tag, "Paused" + (smViewer != null ? " smViewer ok " : "smViewer null"));
-    	}catch (Exception e)
-    	{
-    		Log.e(tag, "ERROR onPause");
-    	}
-    	
-    }
+	public void onPause(boolean multitasking) {
+		try{
+			smViewer.smCamera.stopPreview();
+			Log.d(tag, "Paused" + (smViewer != null ? " smViewer ok " : "smViewer null"));
+		}catch (Exception e)
+		{
+			Log.e(tag, "ERROR onPause");
+		}
 
-    @Override
-    public void onResume(boolean multitasking) {
-    	try {
+	}
+
+	@Override
+	public void onResume(boolean multitasking) {
+		try {
     		// smViewer.smCamera.startPreview();
-    		Log.d(tag, "Resumed" + (smViewer != null ? " smViewer ok " : "smViewer null"));
-    	}catch (Exception e)
-    	{
-    		Log.e(tag, "ERROR onResume");
-    	}
+			Log.d(tag, "Resumed" + (smViewer != null ? " smViewer ok " : "smViewer null"));
+		}catch (Exception e)
+		{
+			Log.e(tag, "ERROR onResume");
+		}
 
-    }
+	}
 
 	public void playSound(String soundName) {
 		try {
@@ -268,36 +278,36 @@ public class ScanMatic extends CordovaPlugin {
 	public boolean info(final CallbackContext callbackContext) {
 
 		if ((smViewer != null) && (smViewer.smCamera != null)) {
-		
+
 			cordova.getThreadPool().execute(new Runnable() {
 				public void run() {
 
 					JSONObject result = new JSONObject();
 					
-			    	try {
-			    		
-			    		int version = 999;
+					try {
 
-			    		try {
+						int version = 999;
+
+						try {
 							version = cordova.getActivity().getPackageManager().getPackageInfo(cordova.getActivity().getApplicationContext().getPackageName(), 0).versionCode;
 						} catch (NameNotFoundException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-			    		
-			    		JSONObject cacheInfo = new JSONObject();
-			    		File cache = cordova.getActivity().getCacheDir();
-			    		cacheInfo.put("freeSpace", cache.getUsableSpace());
-			    		result.put("version", version);
-			    		result.put("cache", cacheInfo);
-			    		if(smViewer.smCamera.camera != null){
-			    			result.put("camera", smViewer.smCamera.info());
-			    		}
-			    		callbackContext.success(result);
 
-			    	} catch (JSONException ex) {
-			    		callbackContext.error(ex.getLocalizedMessage());	
-			    	}
+						JSONObject cacheInfo = new JSONObject();
+						File cache = cordova.getActivity().getCacheDir();
+						cacheInfo.put("freeSpace", cache.getUsableSpace());
+						result.put("version", version);
+						result.put("cache", cacheInfo);
+						if(smViewer.smCamera.camera != null){
+							result.put("camera", smViewer.smCamera.info());
+						}
+						callbackContext.success(result);
+
+					} catch (JSONException ex) {
+						callbackContext.error(ex.getLocalizedMessage());	
+					}
 				}
 			});	
 			
@@ -336,34 +346,34 @@ public class ScanMatic extends CordovaPlugin {
 					return stopCamera(callbackContext);
 			} else if (action.equals("info")) {
 				return info(callbackContext);
-	        } else if (action.equals("capture")) {
-	        	return capture(callbackContext);
-	        } else if (action.equals("focus")) {
-	        	return focus(callbackContext);
-	        } else if (action.equals("flash")) {
-	        	return flash(args.getString(0), callbackContext);
-	        } else if (action.equals("setImageSpecs")) {
-	        	return setImageSpecs(args.getString(0), args.getString(1), args.getString(2), callbackContext);
-	        } else if (action.equals("sound")) {
-	        	return sound(args.getString(0), callbackContext);
-	        } else if (action.equals("deleteResource")) {
-	        	return deleteResource(args.getString(0), callbackContext);
-	        } else if (action.equals("finish")) {
-	        	cordova.getActivity().finish();
-	        	return true;
-	        } else if (action.equals("onCapture")) {
-	        	smViewer.captureCallback = callbackContext;
-	        	return true;
-	        } else if (action.equals("onPreview")) {
-	        	smViewer.previewCallback = callbackContext;
-	        	return true;
-	        } else if (action.equals("onAutoFocus")) {
-	        	smViewer.autoFocusCallback = callbackContext;
-	        	return true;
-	        } else if (action.equals("onAutoFocusMove")) {
-	        	smViewer.autoFocusMovedCallback = callbackContext;
-	        	return true;
-	        }
+			} else if (action.equals("capture")) {
+				return capture(callbackContext);
+			} else if (action.equals("focus")) {
+				return focus(callbackContext);
+			} else if (action.equals("flash")) {
+				return flash(args.getString(0), callbackContext);
+			} else if (action.equals("setImageSpecs")) {
+				return setImageSpecs(args.getString(0), args.getString(1), args.getString(2), callbackContext);
+			} else if (action.equals("sound")) {
+				return sound(args.getString(0), callbackContext);
+			} else if (action.equals("deleteResource")) {
+				return deleteResource(args.getString(0), callbackContext);
+			} else if (action.equals("finish")) {
+				cordova.getActivity().finish();
+				return true;
+			} else if (action.equals("onCapture")) {
+				smViewer.captureCallback = callbackContext;
+				return true;
+			} else if (action.equals("onPreview")) {
+				smViewer.previewCallback = callbackContext;
+				return true;
+			} else if (action.equals("onAutoFocus")) {
+				smViewer.autoFocusCallback = callbackContext;
+				return true;
+			} else if (action.equals("onAutoFocusMove")) {
+				smViewer.autoFocusMovedCallback = callbackContext;
+				return true;
+			}
 		} catch (Exception e) {
 			callbackContext.error(e.getLocalizedMessage());
 		}

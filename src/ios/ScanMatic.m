@@ -16,16 +16,14 @@
 - (void)pluginInitialize {
     
     [super pluginInitialize];
-    uriLast = [NSMutableDictionary dictionary];
-    [uriLast setObject:@"spendmatic://null?loginToken=null" forKey:@"uri"];
+
+    launchURI = @"spendmatic://";
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPause) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume) name:UIApplicationWillEnterForegroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
     
     CGRect viewBounds = [[UIScreen mainScreen] bounds];
-    //NSLog(@"VIDEO BOUNDS w: %.2f h: %.2f", viewBounds.size.width, viewBounds.size.height);
-    //viewBounds.size.height += 20;
 
     viewBounds.origin = self.viewController.view.bounds.origin;
     
@@ -42,7 +40,6 @@
     AVCaptureVideoPreviewLayer *captureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:session];
     
     captureVideoPreviewLayer.videoGravity = AVLayerVideoGravityResize;
-    //captureVideoPreviewLayer.
 
     captureVideoPreviewLayer.frame = self.cameraPreview.bounds;
     [self.cameraPreview.layer addSublayer:captureVideoPreviewLayer];
@@ -92,9 +89,6 @@
             [session addOutput:cameraOutput];
             [session commitConfiguration];
 
-            
-
-            
             NSMutableDictionary* camera = [NSMutableDictionary dictionary];
             NSMutableArray* flashModes = [NSMutableArray array];
             
@@ -559,7 +553,7 @@
 }
 
 - (void)getLaunchURI:(CDVInvokedUrlCommand*)command {
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:uriLast];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:launchURI];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
@@ -568,7 +562,7 @@
     NSString *uri =[[noteInfo objectForKey:@"UIApplicationLaunchOptionsURLKey"] absoluteString];
     if (uri != nil)
     {
-        [uriLast setObject:uri forKey:@"uri"];
+        launchURI = uri;
     }
 }
 
