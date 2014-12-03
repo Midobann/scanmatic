@@ -199,7 +199,9 @@ public class ScanMatic extends CordovaPlugin {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				try {
-					smViewer.smCamera.startPreview();
+					synchronized(smViewer.smCamera) {
+						smViewer.smCamera.startPreview();
+					}
 					callbackContext.success();
 				} catch (Exception e) {
 					callbackContext.error(e.getLocalizedMessage());
@@ -214,7 +216,9 @@ public class ScanMatic extends CordovaPlugin {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				try {
-					smViewer.smCamera.stopPreview();
+					synchronized(smViewer.smCamera) {
+						smViewer.smCamera.stopPreview();
+					}
 					callbackContext.success();
 				} catch (Exception e) {
 					callbackContext.error(e.getLocalizedMessage());
@@ -228,8 +232,10 @@ public class ScanMatic extends CordovaPlugin {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				try {
-					if ((smViewer != null) && (smViewer.smCamera != null) && (smViewer.smCamera.camera != null))
-						{smViewer.smCamera.setFlash(state);}
+					synchronized(smViewer.smCamera) {
+						if (smViewer.smCamera.camera != null)
+							smViewer.smCamera.setFlash(state);
+					}
 					callbackContext.success();
 				} catch (Exception e) {
 					callbackContext.error(e.getLocalizedMessage());
@@ -247,9 +253,10 @@ public class ScanMatic extends CordovaPlugin {
 					smViewer.smCamera.jpegCompression = Integer.parseInt(compression);
 					smViewer.smCamera.pixelsTarget = Integer.parseInt(pixelsOutput);
 					smViewer.smCamera.pixelsCaptureTarget = Integer.parseInt(pixelsCapture);
-					if (smViewer.smCamera.active)
-					{
-						smViewer.smCamera.startPreview();
+					synchronized(smViewer.smCamera) {
+						if (smViewer.smCamera.active) {
+							smViewer.smCamera.startPreview();
+						}
 					}
 					callbackContext.success();
 				} catch (Exception e) {
@@ -264,7 +271,9 @@ public class ScanMatic extends CordovaPlugin {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				try {
-					smViewer.requestCapture();
+					synchronized(smViewer.smCamera) {
+						smViewer.requestCapture();
+					}
 					playSound("shutter");
 					callbackContext.success();
 				} catch (Exception e) {
@@ -301,7 +310,9 @@ public class ScanMatic extends CordovaPlugin {
 						result.put("version", version);
 						result.put("cache", cacheInfo);
 						if(smViewer.smCamera.camera != null){
-							result.put("camera", smViewer.smCamera.info());
+							synchronized(smViewer.smCamera) {
+								result.put("camera", smViewer.smCamera.info());
+							}
 						}
 						callbackContext.success(result);
 
@@ -322,7 +333,9 @@ public class ScanMatic extends CordovaPlugin {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				try {
-					smViewer.smCamera.focus();
+					synchronized(smViewer.smCamera){
+						smViewer.smCamera.focus();
+					}
 					callbackContext.success();
 				} catch (Exception e) {
 					callbackContext.error(e.getLocalizedMessage());
