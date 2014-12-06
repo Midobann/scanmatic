@@ -37,7 +37,7 @@
 
     session.sessionPreset = AVCaptureSessionPresetMedium;
 
-    AVCaptureVideoPreviewLayer *captureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:session];
+    captureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:session];
     
     captureVideoPreviewLayer.videoGravity = AVLayerVideoGravityResize;
     captureVideoPreviewLayer.opacity = 0.0f;
