@@ -41,8 +41,6 @@ public class ScanMatic extends CordovaPlugin {
 	public static final int cashregister = R.raw.cashregister;
 	public static final int alarm = R.raw.alarm;
 	public static final int ding = R.raw.ding;
-
-	
 	
 	public SoundPool soundPool;
 	public HashMap<Integer, Integer> soundPoolMap; 
@@ -50,9 +48,10 @@ public class ScanMatic extends CordovaPlugin {
 	private String intentToLaunchURI(Intent intent) {
 		String intentString = intent.getDataString();
 		String recRoute = intent.getStringExtra("route");
-		String recToken = intent.getStringExtra("loginToken");
+		String recQuery = intent.getStringExtra("query");
+		String recHash = intent.getStringExtra("hash");
 		if (intentString != null) {
-			return intentString + recRoute + "?loginToken=" + recToken;
+			return intentString + "app/" + recRoute + recQuery + recHash;
 		} else {
 			return null; 
 		}
