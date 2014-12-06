@@ -21,6 +21,7 @@ import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
@@ -138,21 +139,28 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 		stopPreview(false);
 	}
 	
-	public void stopPreview(boolean active) {
+	public void stopPreview(boolean force) {
 		try {
 			if (camera != null) {
 				camera.setPreviewCallback(null);
 				camera.stopPreview();
 				camera.release();
 				camera = null;
-				active = false || active;
+				active = false || force;
 			}
 
-			smViewer.setVisibility(View.INVISIBLE);
+			Handler handler = new Handler(smViewer.getContext().getMainLooper());
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					smViewer.setAlpha(0.0f);
+				}
+			});
+			
 		}
 		catch (Exception e)
 		{
-			int a = 1;
+			Log.e("SMCamera", e.getLocalizedMessage());
 		}
 	}
 
@@ -174,7 +182,13 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 			return;
 		}
 
-		smViewer.setVisibility(View.VISIBLE);
+		Handler handler = new Handler(smViewer.getContext().getMainLooper());
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				smViewer.setAlpha(1.0f);
+			}
+		});
 		
 		configureCamera();
 		camera.startPreview();
