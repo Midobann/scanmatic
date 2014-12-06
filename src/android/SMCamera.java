@@ -147,6 +147,8 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 				camera = null;
 				active = false || active;
 			}
+
+			smViewer.setVisibility(INVISIBLE);
 		}
 		catch (Exception e)
 		{
@@ -171,9 +173,12 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 			Log.e("Problem getting camera", e.getLocalizedMessage());
 			return;
 		}
+
+		smViewer.setVisibility(VISIBLE);
 		
 		configureCamera();
 		camera.startPreview();
+		
 		if (android.os.Build.VERSION.SDK_INT >= 16) {
 			camera.setAutoFocusMoveCallback(new Camera.AutoFocusMoveCallback() {
 				public void onAutoFocusMoving(boolean start, Camera camera) {
