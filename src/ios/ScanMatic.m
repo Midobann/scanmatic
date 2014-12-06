@@ -40,6 +40,7 @@
     AVCaptureVideoPreviewLayer *captureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:session];
     
     captureVideoPreviewLayer.videoGravity = AVLayerVideoGravityResize;
+    captureVideoPreviewLayer.opacity = 0.0f;
 
     captureVideoPreviewLayer.frame = self.cameraPreview.bounds;
     [self.cameraPreview.layer addSublayer:captureVideoPreviewLayer];
@@ -147,7 +148,8 @@
                 [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
                 
             } else {
-            
+                
+                captureVideoPreviewLayer.opacity = 1.0f;
                 [session startRunning];
             
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -162,6 +164,7 @@
                 [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
             } else {
                 [session stopRunning];
+                captureVideoPreviewLayer.opacity = 0.0f;
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
                 [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
             }
