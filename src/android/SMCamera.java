@@ -148,7 +148,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 				active = false || active;
 			}
 
-			smViewer.setVisibility(INVISIBLE);
+			smViewer.setVisibility(View.INVISIBLE);
 		}
 		catch (Exception e)
 		{
@@ -174,7 +174,7 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
 			return;
 		}
 
-		smViewer.setVisibility(VISIBLE);
+		smViewer.setVisibility(View.VISIBLE);
 		
 		configureCamera();
 		camera.startPreview();
