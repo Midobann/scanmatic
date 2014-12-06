@@ -29,15 +29,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import com.spendmatic.app.R;
 import android.util.Log;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.util.AttributeSet;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-
-
 public class ScanMatic extends CordovaPlugin {
 
 	SMViewer smViewer;
@@ -225,10 +216,6 @@ public class ScanMatic extends CordovaPlugin {
 				try {
 					synchronized(smViewer.smCamera) {
 						smViewer.smCamera.stopPreview();
-						//clear SMViewer image
-						Canvas canvas = smViewer.surfaceHolder.lockCanvas(null);
-		                canvas.drawColor(Color.BLACK);
-		                smViewer.surfaceHolder.unlockCanvasAndPost(canvas);
 					}
 					callbackContext.success();
 				} catch (Exception e) {
