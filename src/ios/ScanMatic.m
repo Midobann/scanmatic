@@ -64,17 +64,6 @@
     NSDictionary *outputSettings = @{ AVVideoCodecKey : AVVideoCodecJPEG};
     [cameraOutput setOutputSettings:outputSettings];
     
-    // wire up capture session
-    [session beginConfiguration];
-    [self setCaptureSize];
-    if ([session canAddInput:cameraInput]) {
-        [session addInput:cameraInput];
-    }
-    if ([session canAddOutput:cameraOutput]){
-        [session addOutput:cameraOutput];
-    }
-    [session commitConfiguration];
-    
     //default values for compression
     jpegCompression = [NSNumber numberWithInt:60];
     pixelsTarget = [NSNumber numberWithInt:1200000];
@@ -327,6 +316,17 @@
         
         jpegCompression = [command.arguments objectAtIndex:0];
         pixelsTarget = [command.arguments objectAtIndex:1];
+
+        // wire up capture session
+        [session beginConfiguration];
+        [self setCaptureSize];
+        if ([session canAddInput:cameraInput]) {
+            [session addInput:cameraInput];
+        }
+        if ([session canAddOutput:cameraOutput]){
+            [session addOutput:cameraOutput];
+        }
+        [session commitConfiguration];
         
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
