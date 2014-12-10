@@ -272,7 +272,7 @@ public class ScanMatic extends CordovaPlugin {
 					
 					JSONObject imageSpecs = new JSONObject();
 					
-					synchronized(smViewer.smCamera) {
+					synchronized(smViewer.smCamera != null) {
 						if (smViewer.smCamera) {
 							imageSpecs.put("jpegCompression", smViewer.smCamera.jpegCompression);
 							imageSpecs.put("pixelsTarget", smViewer.smCamera.pixelsTarget);
