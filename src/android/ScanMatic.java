@@ -265,7 +265,7 @@ public class ScanMatic extends CordovaPlugin {
 		return true;
 	}
 
-	public boolean getImageSpecs(final CallbackContext context) {
+	public boolean getImageSpecs(final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				try {
