@@ -38,8 +38,8 @@ public class SMCamera implements Camera.PreviewCallback, Camera.PictureCallback 
     public Bitmap overlaysnap;
     
     public int jpegCompression = 60;
-    public int pixelsTarget = 1200000;
-    public int pixelsCaptureTarget = 1200000;
+    public int pixelsTarget = 2200000;
+    public int pixelsCaptureTarget = 2200000;
 
     String flash = null;
     public boolean active = false;
