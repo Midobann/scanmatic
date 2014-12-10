@@ -320,6 +320,20 @@
     });
 }
 
+- (void)getImageSpecs:(CDVInvokedUrlCommand*)command {
+    @try {
+        NSMutableDictionary* imageSpecs = [NSMutableDictionary dictionary];
+        CDVPluginResult* pluginResult;
+
+        NSNumber *jpegCompression;
+        NSNumber *pixelsTarget;
+
+        imageSpecs setObject:[NSNumber numberWithInt:1] forKey:""
+    }  
+    
+
+}
+
 - (void)setImageSpecs:(CDVInvokedUrlCommand*)command {
    
    @try {

@@ -265,6 +265,31 @@ public class ScanMatic extends CordovaPlugin {
 		return true;
 	}
 
+	public boolean getImageSpecs(final CallbackContext context) {
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
+				try {
+					
+					JSONObject imageSpecs = new JSONObject();
+					
+					synchronized(smViewer.smCamera) {
+						if (smViewer.smCamera) {
+							imageSpecs.put("jpegCompression", smViewer.smCamera.jpegCompression);
+							imageSpecs.put("pixelsTarget", smViewer.smCamera.pixelsTarget);
+							imageSpecs.put("pixelsCaptureTarget", smViewer.smCamera.pixelsCaptureTarget);
+						}
+					}
+
+					callbackContext.success(imageSpecs);
+
+				} catch (Exception e) {
+					callbackContext.error(e.getLocalizedMessage());
+				}
+			}
+		});
+		return true;
+	}
+
 	public boolean capture(final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
@@ -363,6 +388,8 @@ public class ScanMatic extends CordovaPlugin {
 				return focus(callbackContext);
 			} else if (action.equals("flash")) {
 				return flash(args.getString(0), callbackContext);
+			} else if (action.equals("getImageSpecs")) {
+				return getImageSpecs(callbackContext);
 			} else if (action.equals("setImageSpecs")) {
 				return setImageSpecs(args.getString(0), args.getString(1), args.getString(2), callbackContext);
 			} else if (action.equals("sound")) {

@@ -51,6 +51,7 @@
 - (void)flash:(CDVInvokedUrlCommand*)command;
 - (void)finish:(CDVInvokedUrlCommand*)command;
 - (void)setImageSpecs:(CDVInvokedUrlCommand*)command;
+- (void)getImageSpecs:(CDVInvokedUrlCommand*)command;
 - (void)sound:(CDVInvokedUrlCommand*)command;
 - (void)deleteResource:(CDVInvokedUrlCommand*)command;
 - (void)getLaunchURI:(CDVInvokedUrlCommand*)command;
