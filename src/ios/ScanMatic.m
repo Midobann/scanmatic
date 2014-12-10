@@ -325,13 +325,16 @@
         NSMutableDictionary* imageSpecs = [NSMutableDictionary dictionary];
         CDVPluginResult* pluginResult;
 
-        NSNumber *jpegCompression;
-        NSNumber *pixelsTarget;
+        [imageSpecs setObject:jpegCompression forKey:@"jpegCompression"];
+        [imageSpecs setObject:pixelsTarget forKey:@"pixelsTarget"];
 
-        imageSpecs setObject:[NSNumber numberWithInt:1] forKey:""
-    }  
-    
-
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:imageSpecs];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    @catch (NSException *e) {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[e reason]];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
 }
 
 - (void)setImageSpecs:(CDVInvokedUrlCommand*)command {
